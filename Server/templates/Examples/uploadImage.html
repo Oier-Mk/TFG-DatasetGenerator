@@ -1,0 +1,46 @@
+{% extends 'index.html' %}
+
+{% block section %}
+
+<!-- Contact-section CSS
+    ================================================== -->
+    <section>
+        <div id="contact-section" class="pad-sec">
+  
+          <div class="container">
+  
+            <div class="title-section text-center animated out" data-animation="fadeInUp" data-delay="0">
+                <div class="row">
+                  <div class="col-sm-8 col-sm-offset-2">
+                    <h2>Face blur</h2>
+                    <hr>
+                    <p>This little web page will automatically blur the faces of the area you want to select. Try to upload it to see a bit of Artificial Vision.</p>
+                </div>
+              </div> <!-- End row -->
+            </div> <!-- end title-section -->
+  
+            <div class="form-wrapper">
+              <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+
+                  <!-- form fields TODO BORRAR CLASES Y COMPROBAR -->
+                  <form action="/FaceBlur/select/" method="post" class="animated out" data-animation="fadeInUp" data-delay="0" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="UploadFile">Add the image you want to upload:</label>
+                        <input class="form-control br-b" type="file" id="file" name="file" accept="image/*">
+                        <br>
+                        <input type="submit" name="submit" value="Send image" id="submit" class="btn btn-sm btn-dark">
+                    </div>                    
+                  </form>
+  
+                </div> <!-- end col-md-8 -->
+              </div> <!-- end row -->
+            </div>  <!-- end form-wrapper -->
+  
+          </div> <!-- end container -->
+  
+        </div> <!-- End contact-section -->
+      </section>
+
+{% endblock %}
+    

@@ -1,0 +1,137 @@
+{% extends 'index.html' %}
+
+{% block section %}
+
+<section>
+    <div id="upload-section" class="pad-sec">
+      <div class="container">
+        <div class="title-section text-center animated out" data-animation="fadeInUp" data-delay="0">
+          <div class="row">
+            <div class="col-sm-8 col-sm-offset-2">
+              <h2>Your result!</h2>
+              <hr>
+            </div> <!-- edn col-sm-8 -->
+          </div> <!-- End row -->
+        </div> <!-- end title-section -->
+        <div class="row">
+            
+        <div class="col-md-3 without-padding">
+            <div class="right-features-services">
+                
+            </div>
+        </div> <!-- end col-md-3 -->
+
+          <div class="col-md-6">
+            <div class="features-image animated out" data-animation="fadeInUp" data-delay="0">
+              <br>
+              <img id= myImgId src={{ url_for('static', path=path) }} alt="">
+              
+              <form action="/FaceBlur/response/" method="post" class="animated out" data-animation="fadeInUp" data-delay="0" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="UploadFile">Click the button to upload the faces you just selected</label>
+                    <input class="form-control br-b" type="hidden" id="x" name="x" value = 0>
+                    <input class="form-control br-b" type="hidden" id="y" name="y" value = 0>
+                    <input class="form-control br-b" type="hidden" id="x2" name="x2" value = 0>
+                    <input class="form-control br-b" type="hidden" id="y2" name="y2" value = 0>
+                    <input class="form-control br-b" type="hidden" id="x3" name="x3" value = 0>
+                    <input class="form-control br-b" type="hidden" id="y3" name="y3" value = 0>
+                    <input class="form-control br-b" type="hidden" id="x4" name="x4" value = 0>
+                    <input class="form-control br-b" type="hidden" id="y4" name="y4" value = 0>
+                    <input class="form-control br-b" type="hidden" id="x5" name="x5" value = 0>
+                    <input class="form-control br-b" type="hidden" id="y5" name="y5" value = 0>
+                    <input class="form-control br-b" type="hidden" id="width" name="width" value = 0>
+                    <input class="form-control br-b" type="hidden" id="height" name="height" value = 0>
+                    <br>
+                    <input class="form-control br-b" type="hidden" id="imgName" name="imgName" value="{{name}}" readonly>
+                    <input type="submit" name="submit" value="Send range" id="submit" class="btn btn-sm btn-dark">
+                </div>                    
+              </form>
+            </div> <!-- end features-image -->
+
+          </div> <!-- end col-md-6 -->
+
+          <div class="col-md-3 without-padding">
+            <div class="right-features-services">
+              
+            </div>
+          </div> <!-- end col-md-3 -->
+
+        </div> <!-- end row -->
+      </div> <!-- end container -->
+    </div>
+  </section>
+
+  <script type="text/javascript">
+    //<!--
+    var myImg = document.getElementById("myImgId");
+    myImg.onmousedown = GetCoordinates;
+    
+    function FindPosition(oElement)
+    {
+      if(typeof( oElement.offsetParent ) != "undefined")
+      {
+        for(var px = 0, py = 0; oElement; oElement = oElement.offsetParent)
+        {
+          px += oElement.offsetLeft;
+          py += oElement.offsetTop;
+        }
+
+          console.log("Primero");
+          console.log(px);
+          return [ px, py ];
+        }
+        else
+        {
+          console.log("Segundo");
+          console.log(oElement.x);
+          return [ oElement.x, oElement.y ];
+        }
+    }
+    let numOfClicks = 0;
+    function GetCoordinates(e)
+    {
+      var PosX = 0;
+      var PosY = 0;
+      var ImgPos = 0;
+      ImgPos = FindPosition(myImg);
+      if (!e) var e = window.event;
+      if (e.pageX || e.pageY)
+      {
+        PosX = e.pageX;
+        PosY = e.pageY;
+      }
+      else if (e.clientX || e.clientY)
+        {
+          PosX = e.clientX + document.body.scrollLeft
+            + document.documentElement.scrollLeft;
+          PosY = e.clientY + document.body.scrollTop
+            + document.documentElement.scrollTop;
+        }
+      PosX = PosX - ImgPos[0];
+      PosY = PosY - ImgPos[1];
+      document.getElementById("width").value = myImg.clientWidth;
+      document.getElementById("height").value = myImg.clientHeight;
+      if(numOfClicks == 0)
+      {
+        document.getElementById("x").value = PosX;
+        document.getElementById("y").value = PosY;
+      }else if(numOfClicks == 1){
+        document.getElementById("x2").value = PosX;
+        document.getElementById("y2").value = PosY;
+      }else if(numOfClicks == 2){
+        document.getElementById("x3").value = PosX;
+        document.getElementById("y3").value = PosY;
+      }else if(numOfClicks == 3){
+        document.getElementById("x4").value = PosX;
+        document.getElementById("y4").value = PosY;
+      }else if(numOfClicks == 4){
+        document.getElementById("x5").value = PosX;
+        document.getElementById("y5").value = PosY;
+      }
+      numOfClicks+=1;
+    } 
+    </script>
+  <!-- End upload-section -->
+  
+
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'index.html' %}
+
+{% block section %}
+
+<!-- Contact-section CSS
+    ================================================== -->
+    <section>
+        <div id="contact-section" class="pad-sec">
+  
+          <div class="container">
+  
+            <div class="title-section text-center animated out" data-animation="fadeInUp" data-delay="0">
+                <div class="row">
+                  <div class="col-sm-8 col-sm-offset-2">
+                    <h2>Image transformation</h2>
+                    <hr>
+                    <p>Here you will be able to find some image transformation tools.</p>
+                </div>
+              </div> <!-- End row -->
+            </div> <!-- end title-section -->
+  
+            <div class="form-wrapper">
+              <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+
+                  <!-- form fields TODO BORRAR CLASES Y COMPROBAR -->
+                  <form action="/ImageTransformator/response" method="post" class="animated out" data-animation="fadeInUp" data-delay="0" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="UploadFile">Add the image you want to upload:</label><br>
+                        <input type="radio" id="box" name="function" value="1">
+                        <label for="box">Box Image</label><br>
+                        <input type="radio" id="clean" name="function" value="2">
+                        <label for="clean">Clean Image</label><br>
+                        <input type="radio" id="delete" name="function" value="3">
+                        <label for="delete">Delete lines</label><br>
+                        <input type="radio" id="rotator" name="function" value="4">
+                        <label for="rotator">Image Rotator</label><br>
+                        <input type="radio" id="reader" name="function" value="5">
+                        <label for="reader">Image Reader</label><br>
+                        <input class="form-control br-b" type="file" id="file" name="file" accept="image/*"><br>
+                        <input type="submit" name="submit" value="Send image" id="submit" class="btn btn-sm btn-dark">
+                    </div>                    
+                  </form>
+  
+                </div> <!-- end col-md-8 -->
+              </div> <!-- end row -->
+            </div>  <!-- end form-wrapper -->
+  
+          </div> <!-- end container -->
+  
+        </div> <!-- End contact-section -->
+      </section>
+
+{% endblock %}
+    

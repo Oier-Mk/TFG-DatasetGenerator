@@ -1,0 +1,180 @@
+{% extends 'index.html' %}
+{% block section %}
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <link rel="stylesheet" href={{ url_for('static', path="/assets/css/cropper.css" ) }}>
+   </head>
+   <body>
+    <div id="contact-section" class="pad-sec">
+      <div class="container">
+        <div class="title-section text-center animated out" data-animation="fadeInUp" data-delay="0">
+            <div class="row">
+               <div class="col-sm-8 col-sm-offset-2">
+                  <h2>Upload and crop your images!</h2>
+                  <hr>
+                  <p>It is necesary for this code to receive the pictures in the correct format and size. Due to this, it will be neccesary to crop all the pictures :).</p>
+               </div>
+         </div>
+         <form class="animated out" data-animation="fadeInUp" data-delay="0" enctype="multipart/form-data">
+            <div class="form-group">
+               <label for="sessionName">Session name:</label>
+               <input class="form-control br-b" type="text" id="sessionName" name="sessionName" required>
+               <br>
+               <label for="UploadFiles">Add the images you want to upload:</label>
+               <input class="form-control br-b" type="file" id="file-input" name="files" accept="image/*" multiple requited>
+               <br>
+               <button type="button" class="btn btn-primary" id="crop-button">Crop images</button>
+            </div>                    
+         </form>
+         <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <h5 class="modal-title" id="modalLabel">Cropper</h5>
+                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                     <span aria-hidden="true">&times;</span>
+                     </button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="img-container">
+                        <img id="image" src="" alt="Picture">
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                     <button type="button" class="btn btn-primary" id="next-button">Next</button>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <form id="upload-form" action="your-server-side-script-url" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="image-data" id="image-data-input" value="">
+            <input type="hidden" name="current-image" id="current-image-input" value="0">
+            <input type="submit" value="Upload images" class="btn btn-primary" id="upload-button" style="display:none;">
+         </form>
+                     </div>
+
+      </div>
+      <script src="https://unpkg.com/jquery@3/dist/jquery.slim.min.js" crossorigin="anonymous"></script>
+      <script src="https://unpkg.com/bootstrap@4/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+      <script src={{ url_for('static', path="/assets/js/cropper.js" ) }}></script>
+      <script>
+         window.addEventListener('DOMContentLoaded', function () {
+           // File input element
+           var fileInput = document.getElementById('file-input');
+         
+           // Crop button
+           var cropButton = document.getElementById('crop-button');
+         
+           // Next button
+           var nextButton = document.getElementById('next-button');
+         
+           // Upload button
+           var uploadButton = document.getElementById('upload-button');
+         
+           // Image element
+           var image = document.getElementById('image');
+         
+           // Image data input element
+           var imageDataInput = document.getElementById('image-data-input');
+         
+           // Current image input element
+           var currentImageInput = document.getElementById('current-image-input');
+         
+           // Array to store image URLs
+           var imageUrls = [];
+         
+           // Index to keep track of current image
+           var currentImage = 0;
+         
+           // Cropper instance
+           var cropper;
+         
+           // Handle file input change event
+           fileInput.addEventListener('change', function (event) {
+             // Get selected files
+             var files = event.target.files;
+         
+             // Create an array of image URLs
+             for (var i = 0; i < files.length; i++) {
+               var file = files[i];
+               var url = URL.createObjectURL(file);
+               imageUrls.push(url);
+             }
+           });
+         
+           // Handle crop button click event
+           cropButton.addEventListener('click', function () {
+             // Open modal
+             $('#modal').modal('show');
+         
+             // Set the src of the image element to the current image URL
+             image.src = imageUrls[currentImage];
+         
+             // Initialize cropper
+             cropper = new Cropper(image, {
+               aspectRatio: 1,
+               crop: function (event) {
+                 // Update image data input value
+                 imageDataInput.value = cropper.getCroppedCanvas({ width: 512, height: 512 }).toDataURL();
+               }
+             });
+           });
+         
+           // Handle next button click event
+           nextButton.addEventListener('click', function () {
+             // Crop current image
+             cropper.getCroppedCanvas({ width: 512, height: 512 }).toBlob(function (blob) {
+               // Create a new file from the croppe data
+               var file = new File([blob], "cropped-image-" + currentImage + ".png", {
+                 type: "image/png"
+               });
+               // Add the new file to the array of files
+               imageUrls[currentImage] = file;
+               currentImage++;
+               if (currentImage < imageUrls.length) {
+                 // set the src of the image element to the next image URL
+                 image.src = imageUrls[currentImage];
+                 cropper.destroy();
+                 cropper = new Cropper(image, {
+                   aspectRatio: 1,
+                   crop: function (event) {
+                     // Update image data input value
+                     imageDataInput.value = cropper.getCroppedCanvas({ width: 512, height: 512 }).toDataURL();
+                   }
+                 });
+                 // Update current image input value
+                 currentImageInput.value = currentImage;
+               } else {
+                 // all image are cropped, now show the upload button
+                 uploadButton.style.display = "block";
+                 nextButton.style.display = "none";
+                 $('#modal').modal('hide');
+               }
+             });
+           });
+         
+           // Handle upload button click event
+         uploadButton.addEventListener('click', function (event) {
+         event.preventDefault();
+         var formData = new FormData();
+         for (var i = 0; i < imageUrls.length; i++) {
+             var file = new File([new Blob([imageUrls[i]], {type: "image/jpeg"})], "image"+i+".jpg", { type: "image/jpeg" });
+             formData.append("files", file);
+             console.log(file);
+         }
+         for (const value of formData.values()) console.log(value);
+         fetch("/receiveAll/", {
+             method: "POST",
+             body: formData,
+         });
+         });
+         
+         
+         
+         });
+      </script>
+    </div>
+{% endblock %}

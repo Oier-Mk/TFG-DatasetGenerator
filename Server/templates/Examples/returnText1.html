@@ -1,0 +1,44 @@
+{% extends 'index.html' %}
+
+{% block section %}
+
+<section>
+    <div id="upload-section" class="pad-sec">
+      <div class="container">
+        <div class="title-section text-center animated out" data-animation="fadeInUp" data-delay="0">
+          <div class="row">
+            <div class="col-sm-8 col-sm-offset-2">
+              <h2>Your result!</h2>
+              <hr>
+              <p>The image you uploaded has <strong>{{nDetections}}</strong> faces.</p>
+            </div> <!-- edn col-sm-8 -->
+          </div> <!-- End row -->
+        </div> <!-- end title-section -->
+        <div class="row">
+            
+        <div class="col-md-3 without-padding">
+            <div class="right-features-services">
+                
+            </div>
+        </div> <!-- end col-md-3 -->
+
+          <div class="col-md-6">
+            <div class="features-image animated out" data-animation="fadeInUp" data-delay="0">
+              <br>
+              <p>{{text}}</p>
+            </div> <!-- end features-image -->
+          </div> <!-- end col-md-6 -->
+
+          <div class="col-md-3 without-padding">
+            <div class="right-features-services">
+              
+            </div>
+          </div> <!-- end col-md-3 -->
+
+        </div> <!-- end row -->
+      </div> <!-- end container -->
+    </div>
+  </section>
+  <!-- End upload-section -->
+
+{% endblock %}
