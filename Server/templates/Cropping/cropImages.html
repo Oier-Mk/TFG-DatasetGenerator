@@ -14,7 +14,7 @@
                <div class="col-sm-8 col-sm-offset-2">
                   <h2>Upload and crop your images!</h2>
                   <hr>
-                  <p>It is necesary for this code to receive the pictures in the correct format and size. Due to this, it will be neccesary to crop all the pictures :).</p>
+                  <p>It is necesary for this code to receive the pictures in the correct format and size. Due to this, it will be neccesary to crop all the pictures. Be careful! If you add the same session name as before, your earlier work will be overided :).</p>
                </div>
          </div>
          <form class="animated out" data-animation="fadeInUp" data-delay="0" enctype="multipart/form-data">
@@ -183,10 +183,10 @@
              formData.append("files", file);
              console.log(file);
          }
-         for (const value of formData.values()) console.log(value);
+         formData.append("sessionName", sessionName.value);
          fetch("/cropImages/", {
              method: "POST",
-             body: formData,
+             body: formData, 
          }); 
          });
          

@@ -42,13 +42,13 @@ async def uploadImages(request: Request):
     return templates.TemplateResponse(link,{"request":request})
 
 @app.post("/cropImages/", response_class=HTMLResponse)
-async def cropImages(request: Request, files: List[UploadFile] = File(...)):
+async def cropImages(request: Request, files: List[UploadFile] = File(...), sessionName: str = Form(...)):
     if files:
-        session_dir = "static" + os.path.sep + "uploadedPictures" + os.path.sep + "prueba"
+        session_dir = "static" + os.path.sep + "uploadedPictures" + os.path.sep + sessionName
         if not os.path.exists(session_dir):
             os.makedirs(session_dir)
         for f in files:
-            filename = "static" + os.path.sep + "uploadedPictures" + os.path.sep + "prueba" + os.path.sep + f'{f.filename}'
+            filename = "static" + os.path.sep + "uploadedPictures" + os.path.sep + sessionName + os.path.sep + f'{f.filename}'
             with open(filename, "wb") as buffer: 
                 shutil.copyfileobj(f.file, buffer)        
         return JSONResponse(content={"message": "images uploaded successfully"})
