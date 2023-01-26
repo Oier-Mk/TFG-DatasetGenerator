@@ -19,13 +19,15 @@
          </div>
          <form class="animated out" data-animation="fadeInUp" data-delay="0" enctype="multipart/form-data">
             <div class="form-group">
-               <label for="sessionName">Session name:</label>
-               <input class="form-control br-b" type="text" id="sessionName" name="sessionName" required>
+               <label for="session-name">Session name:</label>
+               <input class="form-control br-b" type="text" id="session-name" name="sessionName" required>
                <br>
                <label for="UploadFiles">Add the images you want to upload:</label>
                <input class="form-control br-b" type="file" id="file-input" name="files" accept="image/*" multiple requited>
                <br>
                <button type="button" class="btn btn-primary" id="crop-button">Crop images</button>
+               <button type="button" class="btn btn-primary" id="upload-button">Upload Images</button>
+
             </div>                    
          </form>
          <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
@@ -43,7 +45,6 @@
                      </div>
                   </div>
                   <div class="modal-footer">
-                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                      <button type="button" class="btn btn-primary" id="next-button">Next</button>
                   </div>
                </div>
@@ -52,7 +53,6 @@
          <form id="upload-form" action="your-server-side-script-url" method="post" enctype="multipart/form-data">
             <input type="hidden" name="image-data" id="image-data-input" value="">
             <input type="hidden" name="current-image" id="current-image-input" value="0">
-            <input type="submit" value="Upload images" class="btn btn-primary" id="upload-button" style="display:none;">
          </form>
                      </div>
 
@@ -62,6 +62,9 @@
       <script src={{ url_for('static', path="/assets/js/cropper.js" ) }}></script>
       <script>
          window.addEventListener('DOMContentLoaded', function () {
+           // Session name
+           var sessionName = document.getElementById('session-name');
+           
            // File input element
            var fileInput = document.getElementById('file-input');
          
@@ -91,6 +94,10 @@
          
            // Cropper instance
            var cropper;
+
+           // initial state
+           uploadButton.style.display = "none";
+
          
            // Handle file input change event
            fileInput.addEventListener('change', function (event) {
@@ -107,6 +114,16 @@
          
            // Handle crop button click event
            cropButton.addEventListener('click', function () {
+             
+             if (sessionName.value == "" ) {
+               alert("Please enter a session name!");
+               return;
+             }
+             if (imageUrls.length == 0) {
+               alert("Please select at least one image!");
+               return;
+             }
+
              // Open modal
              $('#modal').modal('show');
          
@@ -149,9 +166,10 @@
                  currentImageInput.value = currentImage;
                } else {
                  // all image are cropped, now show the upload button
-                 uploadButton.style.display = "block";
                  nextButton.style.display = "none";
                  $('#modal').modal('hide');
+                 cropButton.style.display = "none";
+                 uploadButton.style.display = "inline";
                }
              });
            });
@@ -166,10 +184,10 @@
              console.log(file);
          }
          for (const value of formData.values()) console.log(value);
-         fetch("/receiveAll/", {
+         fetch("/cropImages/", {
              method: "POST",
              body: formData,
-         });
+         }); 
          });
          
          

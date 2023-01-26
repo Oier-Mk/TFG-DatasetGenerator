@@ -43,7 +43,6 @@ async def uploadImages(request: Request):
 
 @app.post("/cropImages/", response_class=HTMLResponse)
 async def cropImages(request: Request, files: List[UploadFile] = File(...)):
-    print("paso el constructor")
     if files:
         session_dir = "static" + os.path.sep + "uploadedPictures" + os.path.sep + "prueba"
         if not os.path.exists(session_dir):
