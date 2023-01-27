@@ -17,7 +17,7 @@
                   <p>It is necesary for this code to receive the pictures in the correct format and size. Due to this, it will be neccesary to crop all the pictures. Be careful! If you add the same session name as before, your earlier work will be overided :).</p>
                </div>
          </div>
-         <form class="animated out" data-animation="fadeInUp" data-delay="0" enctype="multipart/form-data">
+         <form method= "POST" action="/cropImages/" class="animated out" id="form" data-animation="fadeInUp" data-delay="0" enctype="multipart/form-data">
             <div class="form-group">
                <label for="session-name">Session name:</label>
                <input class="form-control br-b" type="text" id="session-name" name="sessionName" required>
@@ -26,8 +26,7 @@
                <input class="form-control br-b" type="file" id="file-input" name="files" accept="image/*" multiple requited>
                <br>
                <button type="button" class="btn btn-primary" id="crop-button">Crop images</button>
-               <button type="button" class="btn btn-primary" id="upload-button">Upload Images</button>
-
+               <button type="submit" class="btn btn-primary" id="upload-button">Upload Images</button>
             </div>                    
          </form>
          <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
@@ -62,6 +61,9 @@
       <script src={{ url_for('static', path="/assets/js/cropper.js" ) }}></script>
       <script>
          window.addEventListener('DOMContentLoaded', function () {
+          //form
+           var form = document.querySelector('form');
+
            // Session name
            var sessionName = document.getElementById('session-name');
            
@@ -173,28 +175,6 @@
                }
              });
            });
-         
-           // Handle upload button click event
-         uploadButton.addEventListener('click', function (event) {
-         event.preventDefault();
-         var formData = new FormData();
-         for (var i = 0; i < imageUrls.length; i++) {
-             var file = new File([new Blob([imageUrls[i]], {type: "image/jpeg"})], "image"+i+".jpg", { type: "image/jpeg" });
-             formData.append("files", file);
-             console.log(file);
-         }
-         formData.append("sessionName", sessionName.value);
-         fetch("/cropImages/", {
-             method: "POST",
-             body: formData
-            }).then(function(response) {
-                window.location.replace("/confirmation/");
-            }); 
-
-         });
-         
-         
-         
          });
       </script>
     </div>
