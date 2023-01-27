@@ -51,15 +51,25 @@ async def uploadImages(request: Request):
 
 # LOGIN PAGE
 @app.post("/check-password/", response_class=HTMLResponse)
-async def uploadImages(request: Request):
-    link = "Utils/confirmation.html"
-    return "correct"
+async def uploadImages(request: Request, email: str = Form(...), password: str = Form(...)):
+    # TODO gestionar base de datos con usuarios
+    if(email == "oime3564@gmail.com" and password == "1234"): 
+        return "correct"
+    else: return "incorrect"
+    
 
 # UPLOADING IMAGES
 @app.get("/uploadImages/", response_class=HTMLResponse)
 async def uploadImages(request: Request):
-    link = "Cropping/cropImages.html"
-    return templates.TemplateResponse(link, {"request": request})
+    # TODO: comprobar que el usuario se ha logueado y de no ser asi mandarle loguearse
+    userLoggedin = True
+    if (userLoggedin):
+        link = "Cropping/cropImages.html"
+        return templates.TemplateResponse(link, {"request": request})
+    else:
+        #TODO pass message throw variable.
+        link = "Utils/rejection.html"
+        return templates.TemplateResponse(link, {"request": request})
 
 
 @app.post("/cropImages/", response_class=HTMLResponse)
@@ -77,7 +87,7 @@ async def cropImages(request: Request, files: List[UploadFile] = File(...), sess
         link = "/Utils/confirmation.html"
     else:
         link = "Utils/rejection.html"
-    # TODO: add a THE PROCESS FOR THE TRAINING AND
+    # TODO añadir proceso de training de las fotos
     return templates.TemplateResponse(link,{"request":request})
 
 
