@@ -186,8 +186,11 @@
          formData.append("sessionName", sessionName.value);
          fetch("/cropImages/", {
              method: "POST",
-             body: formData, 
-         }); 
+             body: formData
+            }).then(function(response) {
+                window.location.replace("/confirmation/");
+            }); 
+
          });
          
          
