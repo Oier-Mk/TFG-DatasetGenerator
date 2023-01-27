@@ -14,8 +14,9 @@ from pathlib import Path
 from pydantic import BaseModel
 from typing import List
 
-
 relative = os.getcwd()
+users = {}
+users["oime3564@gmail.com"] = ["Oier","oime3564@gmail.com","1234"]
 
 app = FastAPI()
 
@@ -29,35 +30,42 @@ templates = Jinja2Templates(directory="templates")
 
 # HOME
 
-
 @app.get("/", response_class=HTMLResponse)
 async def uploadFile(request: Request):
     return templates.TemplateResponse("home.html", {"request": request})
 
 # LOGIN PAGE
-
-
 @app.get("/login/", response_class=HTMLResponse)
 async def uploadImages(request: Request):
     link = "Login/login.html"
     return templates.TemplateResponse(link, {"request": request})
 
-
-# LOGIN PAGE
-@app.get("/confirmation/", response_class=HTMLResponse)
+@app.get("/correct-login/", response_class=HTMLResponse)
 async def uploadImages(request: Request):
-    link = "Utils/confirmation.html"
-    return templates.TemplateResponse(link, {"request": request})
+    return templates.TemplateResponse("Login/correctLogin.html", {"request": request})
 
-# LOGIN PAGE
+@app.get("/correct-singup/", response_class=HTMLResponse)
+async def uploadImages(request: Request):
+    return templates.TemplateResponse("login/correctSingup.html", {"request": request})
+
 @app.post("/check-password/", response_class=HTMLResponse)
-async def uploadImages(request: Request, email: str = Form(...), password: str = Form(...)):
+async def uploadImages(request: Request, name: str = Form(...), email: str = Form(...), password: str = Form(...), password2: str = Form(...)):
     # TODO gestionar base de datos con usuarios
-    if(email == "oime3564@gmail.com" and password == "1234"): 
+    print(email +" "+ password)
+    if (name == "Name" and password2 == "Repeat your password"):
+        print("login")
+        if(email in users): 
+            if (users[email][2] == password): 
+                return "correct"
+            else: 
+                return "incorrect"
+        else:
+            return "singup"
+    else:
+        users[email] = [name,email,password]
+        print(users[email])
         return "correct"
-    else: return "incorrect"
     
-
 # UPLOADING IMAGES
 @app.get("/uploadImages/", response_class=HTMLResponse)
 async def uploadImages(request: Request):
@@ -70,7 +78,6 @@ async def uploadImages(request: Request):
         #TODO pass message throw variable.
         link = "Utils/rejection.html"
         return templates.TemplateResponse(link, {"request": request})
-
 
 @app.post("/cropImages/", response_class=HTMLResponse)
 async def cropImages(request: Request, files: List[UploadFile] = File(...), sessionName: str = Form(...)):
@@ -89,13 +96,3 @@ async def cropImages(request: Request, files: List[UploadFile] = File(...), sess
         link = "Utils/rejection.html"
     # TODO añadir proceso de training de las fotos
     return templates.TemplateResponse(link,{"request":request})
-
-
-@app.get("/upload/", response_class=HTMLResponse)
-async def uploadImages(request: Request):
-    link = "Cropping/uploadImages.html"
-    return templates.TemplateResponse(link, {"request": request})
-
-    #     path = "static" + os.path.sep + "ImageTransformator" + os.path.sep + "results" + os.path.sep + function + os.path.sep + file.filename.split('.')[0] + '.txt'
-    #     return templates.TemplateResponse("ImageTransformator/returnText.html",{"request":request})
-    # return templates.TemplateResponse("ImageTransformator/returnImage.html",{"request":request, "path": path})
