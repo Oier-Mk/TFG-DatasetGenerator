@@ -1,0 +1,58 @@
+{% extends 'index.html' %}
+{% block section %}
+
+<head>
+   <meta charset="utf-8">
+   <meta http-equiv="x-ua-compatible" content="ie=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+   <link rel="stylesheet" href={{ url_for('static', path="/assets/css/cropper.css" ) }}>
+</head>
+
+<div id="content">
+
+   <div class="container" style="display: flex; height:80vh; ">
+
+      <div class="left-sidebar" style="overflow: scroll; width: 25%; height: 80vh;">
+         <br>
+         <input type="submit" name="submit" value="Download pictures" id="submit" class="btn btn-sm btn-dark"
+            style="width: 100%;">
+         <ul>
+            {% for session in sessions %}
+            <br><a href="{{ session }}">{{ session }}</a>
+            {% endfor %}
+         </ul>
+      </div>
+      <div class="title-section text-center animated out" data-animation="fadeInUp" data-delay="0"
+         style="overflow: scroll; width: 75%; height: 80vh;">
+         {% for box in folder %}
+         <div class="row">
+            <!-- member-team -->
+            {% for file in box %}
+            <div class="col-sm-4">
+               <div class="member-team animated fadeInLeft in" data-animation="fadeInLeft" data-delay="0">
+                  <img src="{{ url_for('static', path=file) }}" alt="">
+                  <div class="magnifier">
+                     <div class="magnifier-inner">
+                        <p>{{ file.split("/")[-1] }}</p>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            {% endfor %}
+         </div> <!-- End col-sm-4 -->
+         {% endfor %}
+      </div>
+   </div>
+</div>
+<script>
+   window.addEventListener('DOMContentLoaded', function () { 
+      var submit = document.getElementById('submit');
+      submit.addEventListener('click', function () {
+         var path = window.location.href;
+         var session = path.slice(path.lastIndexOf('/')+1);
+         window.location.href = '/download/'+session;
+      });
+   });
+</script>
+
+{% endblock %}
