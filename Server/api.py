@@ -1,17 +1,10 @@
-from fastapi import FastAPI, File, UploadFile, Request, Form, Query, Response
-from typing import Union
+from fastapi import FastAPI, File, UploadFile, Request, Form, Response
 import shutil
 import os
-import io
-import cv2
-from starlette.responses import StreamingResponse
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
 from pathlib import Path
-from pydantic import BaseModel
 from typing import List
 
 relative = os.getcwd()
@@ -166,13 +159,6 @@ async def download_zip(request: Request, session: str):
         if not os.path.exists(zip_path):
             os.makedirs(zip_path)
         zip_path = os.path.join(os.getcwd(), "static", "uploadedPictures", "compressed", "oime3564@gmail.com", session)
-
-
-        print(folder_path)
-        print(zip_path)
-
-        # folder_path = "/Users/mentxaka/Github/TFG-DatasetGenerator/Server/static/uploadedPictures/oime3564@gmail.com/Coches"
-        # zip_path = "/Users/mentxaka/Github/TFG-DatasetGenerator/Server/static/uploadedPictures/compressed/oime3564@gmail.com/Coches"
 
         shutil.make_archive(zip_path, "zip", folder_path)
 
