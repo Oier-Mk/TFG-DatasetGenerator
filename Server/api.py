@@ -40,13 +40,13 @@ async def uploadImages(request: Request):
     link = "Login/login.html"
     return templates.TemplateResponse(link, {"request": request})
 
-@app.get("/correct-login/", response_class=HTMLResponse)
-async def uploadImages(request: Request):
-    return templates.TemplateResponse("Login/correctLogin.html", {"request": request})
+@app.get("/correct-login/{email}", response_class=HTMLResponse)
+async def uploadImages(request: Request, email: str):
+    return templates.TemplateResponse( "Login/correctLogin.html", {"request": request, "name": users[email][0]})
 
-@app.get("/correct-singup/", response_class=HTMLResponse)
-async def uploadImages(request: Request):
-    return templates.TemplateResponse("login/correctSingup.html", {"request": request})
+@app.get("/correct-singup/{name}")
+async def correct_singup(request: Request, name: str):
+    return templates.TemplateResponse("login/correctSingup.html", {"request": request, "name": name})
 
 @app.post("/check-password/", response_class=HTMLResponse)
 async def uploadImages(request: Request, name: str = Form(...), email: str = Form(...), password: str = Form(...), password2: str = Form(...)):
@@ -69,7 +69,7 @@ async def uploadImages(request: Request, name: str = Form(...), email: str = For
 # UPLOADING IMAGES
 @app.get("/uploadImages/", response_class=HTMLResponse)
 async def uploadImages(request: Request):
-    # TODO: comprobar que el usuario se ha logueado y de no ser asi mandarle loguearse
+    #TODO: comprobar que el usuario se ha logueado y de no ser asi mandarle loguearse
     userLoggedin = True
     if (userLoggedin):
         link = "Cropping/cropImages.html"
@@ -94,5 +94,5 @@ async def cropImages(request: Request, files: List[UploadFile] = File(...), sess
         link = "/Utils/confirmation.html"
     else:
         link = "Utils/rejection.html"
-    # TODO añadir proceso de training de las fotos
+    #TODO añadir proceso de training de las fotos
     return templates.TemplateResponse(link,{"request":request})
