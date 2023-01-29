@@ -2,6 +2,7 @@
 {% block section %}
 
 <head>
+   <link rel="stylesheet" href={{ url_for('static', path="/assets/css/popup.css" ) }}>
    <meta charset="utf-8">
    <meta http-equiv="x-ua-compatible" content="ie=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -10,13 +11,23 @@
 
 <div id="content">
 
-   <div class="container" style="display: flex; height:80vh; ">
+   <!-- popup -->
+   <div class="popup">
+      <!-- top bar -->
+      <div class="top-bar">
+         <p class="image-name">img1.png</p>
+         <span class="close-btn"></span>
+      </div>
+      <!-- image -->
+      <img src={{ url_for('static', path="assets/img/img1.png" ) }} class="large-image" alt="">
+   </div>
 
+   <div class="container" style="display: flex; height:80vh; ">
       <div class="left-sidebar" style="overflow: scroll; width: 25%; height: 80vh;">
          <br>
          <input type="submit" name="submit" value="Download pictures" id="submit" class="btn btn-sm btn-dark"
             style="width: 100%;">
-         <ul>
+         <ul id="sessions">
             {% for session in sessions %}
             <br><a href="{{ session }}">{{ session }}</a>
             {% endfor %}
@@ -30,7 +41,7 @@
             {% for file in box %}
             <div class="col-sm-4">
                <div class="member-team animated fadeInLeft in" data-animation="fadeInLeft" data-delay="0">
-                  <img src="{{ url_for('static', path=file) }}" alt="">
+                  <img src="{{ url_for('static', path=file) }}" alt="" class="image">
                   <div class="magnifier">
                      <div class="magnifier-inner">
                         <p>{{ file.split("/")[-1] }}</p>
@@ -45,14 +56,54 @@
    </div>
 </div>
 <script>
-   window.addEventListener('DOMContentLoaded', function () { 
+   window.addEventListener('DOMContentLoaded', function () {
       var submit = document.getElementById('submit');
       submit.addEventListener('click', function () {
          var path = window.location.href;
-         var session = path.slice(path.lastIndexOf('/')+1);
-         window.location.href = '/download/'+session;
+         var session = path.slice(path.lastIndexOf('/') + 1);
+         window.location.href = '/download/' + session;
       });
-   });
+
+
+        // popup
+
+        const elements = [...document.querySelectorAll('.col-sm-4')];
+
+        const popup = document.querySelector('.popup');
+        const closeBtn = document.querySelector('.close-btn');
+        const imageName = document.querySelector('.image-name');
+        const largeImage = document.querySelector('.large-image');
+        const sessions = document.getElementById('sessions');
+
+        elements.forEach((item) => {
+            item.addEventListener('click', () => {
+                const image = item.children[0].children[0]
+                const path = image.src.split("/");
+                let name = path[path.length -1];
+                updateImage(name);
+                popup.classList.toggle('active');
+            })
+        })
+
+        const updateImage = (name) => {
+            let path = window.location.href.split("/");
+            let session = path[path.length -1];
+
+            if (session === "ftm"){
+               session = sessions.children[1].textContent
+            }
+
+            let url = session+"/"+name;
+            console.log(url)
+            largeImage.src = 'http://127.0.0.1:8000/static/uploadedPictures/oime3564@gmail.com/'+url;
+            imageName.innerHTML = url;
+        }
+
+        closeBtn.addEventListener('click', () => {
+            popup.classList.toggle('active');
+        })
+
+   })
 </script>
 
 {% endblock %}

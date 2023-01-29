@@ -146,7 +146,7 @@ async def uploadImages(request: Request, session: str):
   
 
 
-
+ 
 @app.get("/download/{session}")
 async def download_zip(request: Request, session: str):
     if(session == "ftm"):
@@ -163,3 +163,46 @@ async def download_zip(request: Request, session: str):
         shutil.make_archive(zip_path, "zip", folder_path)
 
         return Response(content=open(zip_path+".zip", 'rb').read(), media_type="application/zip")
+
+
+@app.get("/prueba/{session}")
+async def prueba(request: Request, session: str):
+      
+    # muestro las sesiones del usuario
+    directory = os.path.join(os.getcwd(), "static", "uploadedPictures", "oime3564@gmail.com")
+    sessions = []
+    for f in os.listdir(directory):
+        if (f != ".DS_Store"):
+            sessions.append(f)
+ 
+    # por defecto muestro la primera sesion del usuario.
+    if (session != "ftm"):
+        for f in os.listdir(directory):
+            if (f == session):
+                folder_path = os.path.join(directory, f)
+                folder = os.listdir(folder_path)
+                break
+    else:
+        for f in os.listdir(directory):
+            if (f != ".DS_Store"):
+                folder_path = os.path.join(directory, f)
+                folder = os.listdir(folder_path)
+                break
+
+    folder_path = folder_path.split("static/")[1]
+
+    folder = [folder_path + os.path.sep + file for file in folder] 
+
+    for i in folder:
+        if i.endswith('.DS_Store'): folder.remove(i)
+
+    names = [string.split('/')[-1] for string in folder]
+
+    n = 3
+    folder = [folder[i:i+n] for i in range(0, len(folder), n)]
+
+    names = [folder[i:i+n] for i in range(0, len(folder), n)]
+
+    link = "popup.html"
+    return templates.TemplateResponse(link, {"request": request, "sessions": sessions, "folder": folder, "names":names})
+  
