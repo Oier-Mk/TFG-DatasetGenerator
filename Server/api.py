@@ -83,17 +83,19 @@ async def uploadImages(request: Request):
 
 
 @app.post("/cropImages/", response_class=HTMLResponse)
-async def cropImages(request: Request, files: List[UploadFile] = File(...), sessionName: str = Form(...)):
+async def cropImages(request: Request, files: List[UploadFile] = Form(...), sessionName: str = Form(...)):
     if files:
-        session_dir = "static" + os.path.sep + \
-            "uploadedPictures" + os.path.sep + sessionName
+
+        session_dir = "static" + os.path.sep + os.path.sep + \
+            "uploadedPictures" + os.path.sep + "oime3564@gmail.com" + os.path.sep + sessionName + os.path.sep
         if not os.path.exists(session_dir):
             os.makedirs(session_dir)
-        for f in files:
-            filename = "static" + os.path.sep + "uploadedPictures" + \
-                os.path.sep + sessionName + os.path.sep + f'{f.filename}'
-            with open(filename, "wb") as buffer:
-                shutil.copyfileobj(f.file, buffer)
+
+        for i in files:
+            print(i.filename)
+            with open(session_dir + i.filename, "wb") as buffer:
+                buffer.write(i.file.read())
+                buffer.close()
         link = "/Utils/confirmation.html"
     else:
         link = "Utils/rejection.html"
@@ -105,14 +107,15 @@ async def cropImages(request: Request, files: List[UploadFile] = File(...), sess
 
 @app.get("/fileExplorer/{session}", response_class=HTMLResponse)
 async def uploadImages(request: Request, session: str):
-    
+
     # muestro las sesiones del usuario
-    directory = os.path.join(os.getcwd(), "static", "uploadedPictures", "oime3564@gmail.com")
+    directory = os.path.join(os.getcwd(), "static",
+                             "uploadedPictures", "oime3564@gmail.com")
     sessions = []
     for f in os.listdir(directory):
         if (f != ".DS_Store"):
             sessions.append(f)
- 
+
     # por defecto muestro la primera sesion del usuario.
     if (session != "ftm"):
         for f in os.listdir(directory):
@@ -129,10 +132,11 @@ async def uploadImages(request: Request, session: str):
 
     folder_path = folder_path.split("static/")[1]
 
-    folder = [folder_path + os.path.sep + file for file in folder] 
+    folder = [folder_path + os.path.sep + file for file in folder]
 
     for i in folder:
-        if i.endswith('.DS_Store'): folder.remove(i)
+        if i.endswith('.DS_Store'):
+            folder.remove(i)
 
     names = [string.split('/')[-1] for string in folder]
 
@@ -142,67 +146,27 @@ async def uploadImages(request: Request, session: str):
     names = [folder[i:i+n] for i in range(0, len(folder), n)]
 
     link = "FileExplorer/fileExplorer.html"
-    return templates.TemplateResponse(link, {"request": request, "sessions": sessions, "folder": folder, "names":names})
-  
+    return templates.TemplateResponse(link, {"request": request, "sessions": sessions, "folder": folder, "names": names})
 
 
- 
 @app.get("/download/{session}")
 async def download_zip(request: Request, session: str):
-    if(session == "ftm"):
-        session = os.listdir(os.path.join(os.getcwd(), "static", "uploadedPictures", "oime3564@gmail.com"))[0]
-    if(session != "ftm"):
+    if (session == "ftm"):
+        session = os.listdir(os.path.join(
+            os.getcwd(), "static", "uploadedPictures", "oime3564@gmail.com"))[0]
+    if (session != "ftm"):
 
-        folder_path = os.path.join(os.getcwd(), "static", "uploadedPictures", "oime3564@gmail.com", session)
+        folder_path = os.path.join(
+            os.getcwd(), "static", "uploadedPictures", "oime3564@gmail.com", session)
 
-        zip_path = os.path.join(os.getcwd(), "static", "uploadedPictures", "compressed", "oime3564@gmail.com")
+        zip_path = os.path.join(
+            os.getcwd(), "static", "uploadedPictures", "compressed", "oime3564@gmail.com")
         if not os.path.exists(zip_path):
             os.makedirs(zip_path)
-        zip_path = os.path.join(os.getcwd(), "static", "uploadedPictures", "compressed", "oime3564@gmail.com", session)
+        zip_path = os.path.join(os.getcwd(
+        ), "static", "uploadedPictures", "compressed", "oime3564@gmail.com", session)
 
         shutil.make_archive(zip_path, "zip", folder_path)
 
         return Response(content=open(zip_path+".zip", 'rb').read(), media_type="application/zip")
 
-
-@app.get("/prueba/{session}")
-async def prueba(request: Request, session: str):
-      
-    # muestro las sesiones del usuario
-    directory = os.path.join(os.getcwd(), "static", "uploadedPictures", "oime3564@gmail.com")
-    sessions = []
-    for f in os.listdir(directory):
-        if (f != ".DS_Store"):
-            sessions.append(f)
- 
-    # por defecto muestro la primera sesion del usuario.
-    if (session != "ftm"):
-        for f in os.listdir(directory):
-            if (f == session):
-                folder_path = os.path.join(directory, f)
-                folder = os.listdir(folder_path)
-                break
-    else:
-        for f in os.listdir(directory):
-            if (f != ".DS_Store"):
-                folder_path = os.path.join(directory, f)
-                folder = os.listdir(folder_path)
-                break
-
-    folder_path = folder_path.split("static/")[1]
-
-    folder = [folder_path + os.path.sep + file for file in folder] 
-
-    for i in folder:
-        if i.endswith('.DS_Store'): folder.remove(i)
-
-    names = [string.split('/')[-1] for string in folder]
-
-    n = 3
-    folder = [folder[i:i+n] for i in range(0, len(folder), n)]
-
-    names = [folder[i:i+n] for i in range(0, len(folder), n)]
-
-    link = "popup.html"
-    return templates.TemplateResponse(link, {"request": request, "sessions": sessions, "folder": folder, "names":names})
-  
