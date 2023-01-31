@@ -8,107 +8,111 @@
   <link rel="stylesheet" href={{ url_for('static', path="/assets/css/cropper.css" ) }}>
 </head>
 
-  <div id="contact-section" class="pad-sec">
-    <div class="container">
-      <div class="title-section text-center animated out" data-animation="fadeInUp" data-delay="0">
-        <div class="row">
-          <div class="col-sm-8 col-sm-offset-2">
-            <h2>Wellcome!</h2>
-            <hr>
-            <p>Login to be able to generate your dataset. If you dont have an account introduce your data and follow the
-              process.</p>
-          </div>
+<div id="contact-section" class="pad-sec">
+  <div class="container">
+    <div class="title-section text-center animated out" data-animation="fadeInUp" data-delay="0">
+      <div class="row">
+        <div class="col-sm-8 col-sm-offset-2">
+          <h2>Wellcome!</h2>
+          <hr>
+          <p>Login to be able to generate your dataset. If you dont have an account introduce your data and follow the
+            process.</p>
         </div>
-        <!-- form fields -->
-        <form method="POST" action="/cropImages/" method="post" name="login" id="login" class="animated fadeInUp in"
-          data-animation="fadeInUp" data-delay="0">
-
-          <fieldset>
-            <div class="form-group">
-              <input class="form-control br-b" type="text" name="name" id="name" placeholder="Name">
-            </div>
-
-            <div class="form-group">
-              <input class="form-control br-b" type="email" name="email" id="email" placeholder="Email">
-            </div>
-
-            <div class="form-group">
-              <input class="form-control br-b" type="password" name="password" id="password" placeholder="Password">
-            </div>
-
-            <div class="form-group">
-              <input class="form-control br-b" type="password" name="password2" id="password2"
-                placeholder="Repeat your password">
-            </div>
-
-            <div class="form-group">
-              <p style="color: red;" id="error-message">Your password may be incorrect :(</p>
-            </div>
-
-          </fieldset>
-
-          <!-- submit button -->
-          <div class="form-group">
-            <input type="submit" name="submit" value="Lets go!" id="submit" class="btn btn-sm btn-dark">
-          </div>
-        </form>
       </div>
+      <!-- form fields -->
+      <form method="POST" action="/cropImages/" method="post" name="login" id="login" class="animated fadeInUp in"
+        data-animation="fadeInUp" data-delay="0">
+
+        <fieldset>
+          <div class="form-group">
+            <input class="form-control br-b" type="text" name="name" id="name" placeholder="Name">
+          </div>
+
+          <div class="form-group">
+            <input class="form-control br-b" type="email" name="email" id="email" placeholder="Email">
+          </div>
+
+          <div class="form-group">
+            <input class="form-control br-b" type="password" name="password" id="password" placeholder="Password">
+          </div>
+
+          <div class="form-group">
+            <input class="form-control br-b" type="password" name="password2" id="password2"
+              placeholder="Repeat your password">
+          </div>
+
+          <div class="form-group">
+            <p style="color: red;" id="error-message">Your password may be incorrect :(</p>
+          </div>
+
+        </fieldset>
+
+        <!-- submit button -->
+        <div class="form-group">
+          <input type="submit" name="submit" value="Lets go!" id="submit" class="btn btn-sm btn-dark">
+        </div>
+      </form>
     </div>
   </div>
+</div>
 
-  <script src="https://unpkg.com/jquery@3/dist/jquery.slim.min.js" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/bootstrap@4/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-  <script>
-    window.addEventListener('DOMContentLoaded', function () {
-      var name = document.querySelector('#name');
-      name.style.display = "none";
-      var password = document.querySelector('#password');
-      var password2 = document.querySelector('#password2');
-      password2.style.display = "none";
-      var error = document.querySelector('#error-message');
-      error.style.display = "none";
+<script src="https://unpkg.com/jquery@3/dist/jquery.slim.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/bootstrap@4/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    var name = document.querySelector('#name');
+    name.style.display = "none";
+    var password = document.querySelector('#password');
+    var password2 = document.querySelector('#password2');
+    password2.style.display = "none";
+    var error = document.querySelector('#error-message');
+    error.style.display = "none";
 
-      name.value = "Name";
-      password2.value = "Repeat your password";
+    name.value = "Name";
+    password2.value = "Repeat your password";
 
-      const form = document.querySelector('form');
-      form.addEventListener('submit', (event) => {
-        event.preventDefault();
-        const formData = new FormData(form);
-        if (name.style.display == "none") {
-          console.log("entra en el if de login")
-          formData.append('singup', 'false');
-          fetch('/check-password/', {
+    const form = document.querySelector('form');
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      if (name.style.display == "none") {
+        console.log("entra en el if de login")
+        formData.append('singup', 'false');
+        fetch('/login/', {
+          method: 'POST',
+          body: formData
+        }).then(response => response.text())
+          .then(result => {
+            if (result === 'correct') {
+              console.log("correct")
+              window.location.href = '/correct-login/'
+            } if (result === 'incorrect') {
+              console.log("incorrect")
+              error.style.display = "inline";
+            } if (result === 'singup') {
+              console.log("singup")
+              name.style.display = "inline";
+              password2.style.display = "inline";
+            }
+          });
+      } else {
+        console.log("entra en el if de singup")
+        console.log(password.value + " - " + password2.value)
+        console.log(password.value === password2.value)
+        if (password.value === password2.value) {
+          console.log("entra en el if de password")
+          formData.append('singup', 'true');
+          fetch('/login/', {
             method: 'POST',
             body: formData
-          }).then(response => response.text())
-            .then(result => {
-              if (result === 'correct') {
-                console.log("correct")
-                window.location.href = '/correct-login/'+email.value;
-              } if (result === 'incorrect') {
-                console.log("incorrect")
-                error.style.display = "inline";
-              } if (result === 'singup') {
-                console.log("singup")
-                name.style.display = "inline";
-                password2.style.display = "inline";
-              }
-            });
+          })
+          window.location.href = '/correct-singup/'
         } else {
-          console.log("entra en el if de singup")
-          console.log(password.value + " - " + password2.value)
-          console.log(password.value === password2.value)
-          if (password.value == password2.value) {
-            console.log("entra en el if de password")
-            formData.append('singup', 'true');
-            window.location.href = '/correct-singup/'+name.value
-          } else {
-            console.log("entra en el else de password")
-            error.style.display = "inline";
-          }
+          console.log("entra en el else de password")
+          error.style.display = "inline";
         }
-      });
+      }
     });
-  </script>
-  {% endblock %}
+  });
+</script>
+{% endblock %}

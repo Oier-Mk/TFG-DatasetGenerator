@@ -15,6 +15,7 @@
         <div class="row">
           <div class="col-sm-8 col-sm-offset-2">
             <h2>Upload and crop your images!</h2>
+            <h3>{{name}}</h3>
             <hr>
             <p>It is necesary for this code to receive the pictures in the correct format and size. Due to this, it will
               be neccesary to crop all the pictures. Be careful! If you add the same session name as before, your
@@ -200,11 +201,12 @@
 
           formData.append("sessionName", sessionName);
 
-          const response = await fetch("/cropImages/", {
+          fetch("/cropImages/", {
             method: "POST",
             body: formData
           });
 
+          window.location.href = '/trainingParameters/'
         });
 
 
