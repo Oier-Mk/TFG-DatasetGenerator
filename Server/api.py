@@ -138,15 +138,11 @@ async def uploadImages(request: Request, session: str):
         if i.endswith('.DS_Store'):
             folder.remove(i)
 
-    names = [string.split('/')[-1] for string in folder]
-
     n = 3
     folder = [folder[i:i+n] for i in range(0, len(folder), n)]
 
-    names = [folder[i:i+n] for i in range(0, len(folder), n)]
-
     link = "FileExplorer/fileExplorer.html"
-    return templates.TemplateResponse(link, {"request": request, "sessions": sessions, "folder": folder, "names": names})
+    return templates.TemplateResponse(link, {"request": request, "sessions": sessions, "folder": folder})
 
 
 @app.get("/download/{session}")
