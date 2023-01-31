@@ -22,7 +22,7 @@ app.mount(
     name="static",
 )
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="templates") 
 
 # HOME
 
@@ -34,8 +34,12 @@ async def home(request: Request):
 # LOGIN PAGE
 
 
-@app.get("/login/", response_class=HTMLResponse)
-async def getLogin(request: Request):
+@app.get("/login/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
+async def getLogin(request: Request, session_data: SessionData = Depends(verifier)):
+    try: 
+        session_data.username
+        logout(request, session_data)
+    except: pass 
     return templates.TemplateResponse("Login/login.html", {"request": request})
 
 
@@ -65,18 +69,14 @@ async def postLogin(request: Request, response: Response, name: str = Form(...),
 
 @app.get("/correct-login/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
 async def correctLogin(request: Request, session_data: SessionData = Depends(verifier)):
-    try:
-        return templates.TemplateResponse("Login/correctLogin.html", {"request": request, "name": session_data.username})
-    except:
-        return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+    try: return templates.TemplateResponse("Login/correctLogin.html", {"request": request, "name": session_data.username})
+    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
 
 @app.get("/correct-singup/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
 async def correctSingup(request: Request, session_data: SessionData = Depends(verifier)):
-    try:
-        return templates.TemplateResponse("Login/correctSingup.html", {"request": request, "name": session_data.username})
-    except:
-        return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+    try: return templates.TemplateResponse("Login/correctSingup.html", {"request": request, "name": session_data.username})
+    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
 # LOGOUT
 
@@ -157,7 +157,7 @@ async def fileExplorer(request: Request, session: str, session_data: SessionData
         n = 3
         folder = [folder[i:i+n] for i in range(0, len(folder), n)]
 
-        return templates.TemplateResponse("FileExplorer/fileExplorer.html", {"request": request, "sessions": sessions, "folder": folder})
+        return templates.TemplateResponse("FileExplorer/fileExplorer.html", {"request": request, "sessions": sessions, "folder": folder, "user_name": session_data.username})
     except:
         return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
@@ -229,7 +229,7 @@ style : str = Form(...)):
             print(style)
 
             # TODO: proceder a entrenar
-            
+
             return "correcto"
 
         except: "incorrecto"

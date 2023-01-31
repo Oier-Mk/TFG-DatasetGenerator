@@ -22,6 +22,8 @@
       <img src={{ url_for('static', path="assets/img/img1.png" ) }} class="large-image" alt="">
    </div>
 
+   <p id="user_name">{{user_name}}</p>
+
    <div class="container" style="display: flex; height:80vh; ">
       <div class="left-sidebar" style="overflow: scroll; width: 25%; height: 80vh;">
          <br>
@@ -57,6 +59,10 @@
 </div>
 <script>
    window.addEventListener('DOMContentLoaded', function () {
+      var userName = document.getElementById('user_name');
+      user_name.style.display = "none";
+
+
       var submit = document.getElementById('submit');
       submit.addEventListener('click', function () {
          var path = window.location.href;
@@ -65,43 +71,47 @@
       });
 
 
-        // popup
+      // popup
 
-        const elements = [...document.querySelectorAll('.col-sm-4')];
+      const elements = [...document.querySelectorAll('.col-sm-4')];
 
-        const popup = document.querySelector('.popup');
-        const closeBtn = document.querySelector('.close-btn');
-        const imageName = document.querySelector('.image-name');
-        const largeImage = document.querySelector('.large-image');
-        const sessions = document.getElementById('sessions');
+      const popup = document.querySelector('.popup');
+      const closeBtn = document.querySelector('.close-btn');
+      const imageName = document.querySelector('.image-name');
+      const largeImage = document.querySelector('.large-image');
+      const sessions = document.getElementById('sessions');
 
-        elements.forEach((item) => {
-            item.addEventListener('click', () => {
-                const image = item.children[0].children[0]
-                const path = image.src.split("/");
-                let name = path[path.length -1];
-                updateImage(name);
-                popup.classList.toggle('active');
-            })
-        })
-
-        const updateImage = (name) => {
-            let path = window.location.href.split("/");
-            let session = path[path.length -1];
-
-            if (session === "ftm"){
-               session = sessions.children[1].textContent
-            }
-
-            let url = session+"/"+name;
-            console.log(url)
-            largeImage.src = 'http://127.0.0.1:8000/static/uploadedPictures/oime3564@gmail.com/'+url;
-            imageName.innerHTML = url;
-        }
-
-        closeBtn.addEventListener('click', () => {
+      elements.forEach((item) => {
+         item.addEventListener('click', () => {
+            const image = item.children[0].children[0]
+            const path = image.src.split("/");
+            let name = path[path.length - 1];
+            updateImage(name);
             popup.classList.toggle('active');
-        })
+         })
+      })
+
+      const updateImage = (name) => {
+         let path = window.location.href.split("/");
+
+         let session = path[path.length - 1];
+
+         if (session === "ftm") {
+            session = sessions.children[1].textContent
+         }
+         path = window.location.href;
+         parts = path.split("/");
+         rootUrl = parts[0] + "//" + parts[2];
+
+         let url = session + "/" + name;
+
+         largeImage.src = rootUrl + '/static/uploadedPictures/' + userName.textContent + "/" + url
+         imageName.innerHTML = url;
+      }
+
+      closeBtn.addEventListener('click', () => {
+         popup.classList.toggle('active');
+      })
 
    })
 </script>
