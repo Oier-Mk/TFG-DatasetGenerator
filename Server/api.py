@@ -16,7 +16,7 @@ users["oime6435@gmail.com"] = ["Oier", "oime6435@gmail.com", "1234"]
 
 app = FastAPI()
 
-app.mount( 
+app.mount(
     "/static",
     StaticFiles(directory=Path(__file__).parent.absolute() / "static"),
     name="static",
@@ -26,29 +26,30 @@ templates = Jinja2Templates(directory="templates")
 
 # HOME
 
+
 @app.get("/", response_class=HTMLResponse)
-async def uploadFile(request: Request):
+async def home(request: Request):
     return templates.TemplateResponse("home.html", {"request": request})
 
 # LOGIN PAGE
 
+
 @app.get("/login/", response_class=HTMLResponse)
-async def uploadImages(request: Request):
-    link = "Login/login.html"
-    return templates.TemplateResponse(link, {"request": request})
+async def getLogin(request: Request):
+    return templates.TemplateResponse("Login/login.html", {"request": request})
 
 
 @app.post("/login/", response_class=HTMLResponse)
-async def check_login(request: Request, response: Response, name: str = Form(...), email: str = Form(...), password: str = Form(...), password2: str = Form(...)):
-    print(email +" - "+ password)
-    if email in users: 
-        if(users[email][2] == password): 
+async def postLogin(request: Request, response: Response, name: str = Form(...), email: str = Form(...), password: str = Form(...), password2: str = Form(...)):
+    print(email + " - " + password)
+    if email in users:
+        if (users[email][2] == password):
             session = uuid4()
             data = SessionData(username=email)
             await backend.create(session, data)
             cookie.attach_to_response(response, session)
             return "correct"
-        else: 
+        else:
             return "incorrect"
     else:
         if name == "Name":
@@ -58,45 +59,53 @@ async def check_login(request: Request, response: Response, name: str = Form(...
             session = uuid4()
             data = SessionData(username=email)
             await backend.create(session, data)
-            cookie.attach_to_response(response, session)   
+            cookie.attach_to_response(response, session)
             return "correct"
 
+
 @app.get("/correct-login/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
-async def uploadImages(request: Request, session_data: SessionData = Depends(verifier)):
-    try: return templates.TemplateResponse("Login/correctLogin.html", {"request": request, "name": session_data.username})
-    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
-    
+async def correctLogin(request: Request, session_data: SessionData = Depends(verifier)):
+    try:
+        return templates.TemplateResponse("Login/correctLogin.html", {"request": request, "name": session_data.username})
+    except:
+        return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
 
 @app.get("/correct-singup/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
-async def correct_singup(request: Request, session_data: SessionData = Depends(verifier)):
-    try: return templates.TemplateResponse("Login/correctSingup.html", {"request": request, "name": session_data.username})
-    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+async def correctSingup(request: Request, session_data: SessionData = Depends(verifier)):
+    try:
+        return templates.TemplateResponse("Login/correctSingup.html", {"request": request, "name": session_data.username})
+    except:
+        return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
 # LOGOUT
 
+
 @app.post("/logout/")
-async def del_session(response: Response, session_id: UUID = Depends(cookie)):
+async def logout(response: Response, session_id: UUID = Depends(cookie)):
     try:
         await backend.delete(session_id)
         cookie.delete_from_response(response)
     except Exception as e:
         e.printstack()
 
-# UPLOADING IMAGES 
+# UPLOADING IMAGES
+
 
 @app.get("/uploadImages/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
 async def uploadImages(request: Request, session_data: SessionData = Depends(verifier)):
-    try: return templates.TemplateResponse("Cropping/cropImages.html", {"request": request, "name": session_data.username})
-    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+    try:
+        return templates.TemplateResponse("Cropping/cropImages.html", {"request": request, "name": session_data.username})
+    except:
+        return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
 
 @app.post("/cropImages/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
 async def cropImages(request: Request, session_data: SessionData = Depends(verifier), files: List[UploadFile] = Form(...), sessionName: str = Form(...)):
     if files:
-
         session_dir = "static" + os.path.sep + os.path.sep + \
-            "uploadedPictures" + os.path.sep + session_data.username + os.path.sep + sessionName + os.path.sep
+            "uploadedPictures" + os.path.sep + session_data.username + \
+            os.path.sep + sessionName + os.path.sep
         if not os.path.exists(session_dir):
             os.makedirs(session_dir)
 
@@ -105,21 +114,19 @@ async def cropImages(request: Request, session_data: SessionData = Depends(verif
             with open(session_dir + i.filename, "wb") as buffer:
                 buffer.write(i.file.read())
                 buffer.close()
-        link = "/Utils/confirmation.html"
-    else: 
-        link = "Utils/rejection.html"
-    # TODO añadir proceso de training de las fotos
-    return templates.TemplateResponse(link, {"request": request})
+        return templates.TemplateResponse("/Utils/confirmation.html", {"request": request})
+    else:
+        return templates.TemplateResponse("Utils/rejection.html", {"request": request})
 
 
 # FILE EXPLORER
 
 @app.get("/fileExplorer/{session}", response_class=HTMLResponse, dependencies=[Depends(cookie)])
-async def uploadImages(request: Request, session: str, session_data: SessionData = Depends(verifier)):
-    try: 
+async def fileExplorer(request: Request, session: str, session_data: SessionData = Depends(verifier)):
+    try:
         # muestro las sesiones del usuario
         directory = os.path.join(os.getcwd(), "static",
-                                "uploadedPictures", session_data.username)
+                                 "uploadedPictures", session_data.username)
         sessions = []
         for f in os.listdir(directory):
             if (f != ".DS_Store"):
@@ -150,14 +157,15 @@ async def uploadImages(request: Request, session: str, session_data: SessionData
         n = 3
         folder = [folder[i:i+n] for i in range(0, len(folder), n)]
 
-        link = "FileExplorer/fileExplorer.html"
-        return templates.TemplateResponse(link, {"request": request, "sessions": sessions, "folder": folder})
-    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+        return templates.TemplateResponse("FileExplorer/fileExplorer.html", {"request": request, "sessions": sessions, "folder": folder})
+    except:
+        return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
 # DOWNLOAD BUTTON
 
+
 @app.get("/download/{session}", dependencies=[Depends(cookie)])
-async def download_zip(request: Request, session: str, session_data: SessionData = Depends(verifier)):
+async def download(request: Request, session: str, session_data: SessionData = Depends(verifier)):
     try:
         if (session == "ftm"):
             session = os.listdir(os.path.join(
@@ -177,13 +185,53 @@ async def download_zip(request: Request, session: str, session_data: SessionData
             shutil.make_archive(zip_path, "zip", folder_path)
 
             return Response(content=open(zip_path+".zip", 'rb').read(), media_type="application/zip")
-    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+    except:
+        return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
-# TRAINING PHASE 
+# TRAINING PHASE
 
-@app.get("/trainingParameters/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
-async def uploadImages(request: Request, session_data: SessionData = Depends(verifier)):
-    name = "Guest"
-    try: name = session_data.username
-    except: pass
-    return templates.TemplateResponse("Login/correctLogin.html", {"request": request, "name": name})
+
+@app.get("/train/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
+async def getTrain(request: Request, session_data: SessionData = Depends(verifier)):
+    try:
+        # muestro las sesiones del usuario
+        directory = os.path.join(
+            os.getcwd(), "static", "uploadedPictures", session_data.username)
+        sessions = []
+        for f in os.listdir(directory):
+            if (f != ".DS_Store"):
+                sessions.append(f)
+        return templates.TemplateResponse("Training/training.html", {"request": request, "sessions": sessions})
+    except:
+        return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+
+
+@app.post("/train/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
+async def postTrain(request: Request, session_data: SessionData = Depends(verifier), 
+session : str = Form(...), 
+resume_training : str = Form(...),  
+unet_training : str = Form(...), 
+unet_learning : str = Form(...), 
+encoder_training : str = Form(...), 
+concept_training : str = Form(...), 
+encoder_learning : str = Form(...), 
+style : str = Form(...)):
+    try:
+        session_data.username
+        try:
+            print(session)
+            print(resume_training)
+            print(unet_training)
+            print(unet_learning)
+            print(encoder_training)
+            print(concept_training)
+            print(encoder_learning)
+            print(style)
+
+            # TODO: proceder a entrenar
+            
+            return "correcto"
+
+        except: "incorrecto"
+    except:
+        return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})

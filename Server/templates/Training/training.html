@@ -1,0 +1,116 @@
+{% extends 'index.html' %}
+{% block section %}
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href={{ url_for('static', path="/assets/css/cropper.css" ) }}>
+</head>
+
+<div id="contact-section" class="pad-sec">
+  <div class="container">
+    <div class="title-section text-center animated out" data-animation="fadeInUp" data-delay="0">
+      <div class="row">
+        <div class="col-sm-8 col-sm-offset-2">
+          <h2>Training!</h2>
+          <hr>
+          <p>Lets start with the training process filling the parameters bellow.</p>
+        </div>
+      </div>
+      <!-- form fields -->
+      <form method="POST" action="/train/" method="post" name="login" id="login" class="animated fadeInUp in"
+        data-animation="fadeInUp" data-delay="0">
+
+        <fieldset>
+          <div class="form-group">
+            <label class="form-control br-b" for="session">Choose one of your sessions</label>
+            <select id="session">
+              {% for session in sessions %}
+              <option class="form-control br-b" value="{{session}}">{{session}}</option>
+              {% endfor %}
+            </select>
+
+            <label class="form-control br-b" for="resume_training">Do you want to train more steps the previews trained
+              model?</label>
+            <input class="form-control br-b" type="checkbox" id="resume_training" >Train again!<br>
+
+            <label class="form-control br-b" for="unet_training">UNet_Training_Steps is the parameter that...</label>
+            <input class="form-control br-b" type="text" id="unet_training" placeholder="650" value="650">
+
+            <label class="form-control br-b" for="unet_learning">Choose the UNet_Learning_Rate rate</label>
+            <select id="unet_learning">
+              <option class="form-control br-b" value="1e-5">1e-5</option>
+              <option class="form-control br-b" value="1e-5">2e-5</option>
+              <option class="form-control br-b" value="1e-5">9e-6</option>
+              <option class="form-control br-b" value="1e-5">8e-6</option>
+              <option class="form-control br-b" value="1e-5">7e-6</option>
+              <option class="form-control br-b" value="1e-5">6e-6</option>
+              <option class="form-control br-b" value="1e-5">5e-6</option>
+              <option class="form-control br-b" value="1e-5">4e-6</option>
+              <option class="form-control br-b" value="1e-5">3e-6</option>
+              <option class="form-control br-b" value="1e-5">2e-6</option>
+            </select>
+
+            <label class="form-control br-b" for="encoder_training">Text_Encoder_Training_Steps is the parameter
+              that...</label>
+            <input class="form-control br-b" type="text" id="encoder_training" placeholder="250" value="250">
+
+            <label class="form-control br-b" for="concept_training">Text_Encoder_Concept_Training_Steps is the parameter
+              that... style</label>
+            <input class="form-control br-b" type="text" id="concept_training" placeholder="0" value="0">
+
+            <label class="form-control br-b" for="encoder_learning">Choose Text_Encoder_Learning_Rate rate</label>
+            <select id="encoder_learning">
+              <option class="form-control br-b" value="1e-5">1e-6</option>
+              <option class="form-control br-b" value="1e-5">2e-6</option>
+              <option class="form-control br-b" value="1e-5">8e-7</option>
+              <option class="form-control br-b" value="1e-5">6e-7</option>
+              <option class="form-control br-b" value="1e-5">5e-7</option>
+              <option class="form-control br-b" value="1e-5">4e-7</option>
+            </select>
+
+            <label class="form-control br-b" for="style">Are you training an style?</label>
+            <input class="form-control br-b" type="checkbox" id="style">It is an style!<br>
+          </div>
+
+        </fieldset>
+
+        <!-- submit button -->
+        <div class="form-group">
+          <input type="button" value="Lets go!" id="submit" class="btn btn-sm btn-dark">
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById("submit").addEventListener("click", async function () {
+    var session = document.getElementById("session").value;
+    var resume_training = document.getElementById("resume_training").checked.toString();
+    var unet_training = document.getElementById("unet_training").value;
+    var unet_learning = document.getElementById("unet_learning").value;
+    var encoder_training = document.getElementById("encoder_training").value;
+    var concept_training = document.getElementById("concept_training").value;
+    var encoder_learning = document.getElementById("encoder_learning").value;
+    var style = document.getElementById("style").checked.toString();
+
+    const formData = new FormData();
+    formData.append("session", session);
+    formData.append("resume_training", resume_training);
+    formData.append("unet_training", unet_training);
+    formData.append("unet_learning", unet_learning);
+    formData.append("encoder_training", encoder_training);
+    formData.append("concept_training", concept_training);
+    formData.append("encoder_learning", encoder_learning);
+    formData.append("style", style);
+
+    fetch("/train/", {
+      method: "POST",
+      body: formData,
+    });
+  });
+</script>
+{% endblock %}
