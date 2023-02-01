@@ -6,15 +6,21 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 from typing import List
-from user_management.sessions import *
 from uuid import uuid4
+from mail_sender.sender import *
+from user_management.sessions import *
+
 
 relative = os.getcwd()
 users = {}
 users["oime3564@gmail.com"] = ["Oier", "oime3564@gmail.com", "1234"]
 users["oime6435@gmail.com"] = ["Oier", "oime6435@gmail.com", "1234"]
 
+# CREATE APP
+
 app = FastAPI()
+
+# LOAD STATIC FILES
 
 app.mount(
     "/static",
@@ -22,10 +28,16 @@ app.mount(
     name="static",
 )
 
+#LOAD TEMPLATES
+
 templates = Jinja2Templates(directory="templates") 
 
-# HOME
+# LOAD EMAIL CONFIG
 
+env = ".env"
+conf = load_email(env)
+
+# HOME
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
@@ -79,7 +91,6 @@ async def correctSingup(request: Request, session_data: SessionData = Depends(ve
     except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
 # LOGOUT
-
 
 @app.post("/logout/")
 async def logout(response: Response, session_id: UUID = Depends(cookie)):
@@ -220,7 +231,7 @@ style : str = Form(...)):
     try:
         session_data.username
         try:
-            print(session)
+            print(session) 
             print(resume_training)
             print(unet_training)
             print(unet_learning) 
@@ -228,6 +239,8 @@ style : str = Form(...)):
             print(concept_training)
             print(encoder_learning)
             print(style) 
+
+            await send_email(conf, session_data.username, "Training completed", "Your training has been completed. You can now use the application.")
 
             # TODO: proceder a entrenar
 
