@@ -9,12 +9,10 @@ from typing import List
 from uuid import uuid4
 from mail_sender.sender import *
 from user_management.sessions import *
+from database.database import *
 
 
-relative = os.getcwd()
-users = {}
-users["oime3564@gmail.com"] = ["Oier", "oime3564@gmail.com", "1234"]
-users["oime6435@gmail.com"] = ["Oier", "oime6435@gmail.com", "1234"]
+#delete_database()
 
 # CREATE APP
 
@@ -34,14 +32,12 @@ templates = Jinja2Templates(directory="templates")
 
 # LOAD EMAIL CONFIG
 
-env = ".env"
-conf = load_email(env)
+conf = load_email(".env")
 
 # HOME
 
 @app.get("/", response_class=HTMLResponse)
-async def home(request: Request):
-    return templates.TemplateResponse("home.html", {"request": request})
+async def home(request: Request): return templates.TemplateResponse("home.html", {"request": request})
 
 # LOGIN PAGE
 
@@ -58,12 +54,12 @@ async def getLogin(request: Request, session_data: SessionData = Depends(verifie
 @app.post("/login/", response_class=HTMLResponse)
 async def postLogin(request: Request, response: Response, name: str = Form(...), email: str = Form(...), password: str = Form(...), password2: str = Form(...)):
     print(email + " - " + password)
-    if email in users:
-        if (users[email][2] == password):
+    if user_exists(email):
+        if (get_password(email) == password):
             session = uuid4()
             data = SessionData(username=email)
             await backend.create(session, data)
-            cookie.attach_to_response(response, session)
+            cookie.attach_to_response(response, session) #TODO get User
             return "correct"
         else:
             return "incorrect"
@@ -75,7 +71,7 @@ async def postLogin(request: Request, response: Response, name: str = Form(...),
             data = SessionData(username=email)
             await backend.create(session, data)
             cookie.attach_to_response(response, session)
-            users[data.username] = [name, email, password]
+            insert_user(email, name, password)
             return "correct"
 
 
@@ -195,8 +191,7 @@ async def download(request: Request, session: str, session_data: SessionData = D
             shutil.make_archive(zip_path, "zip", folder_path)
 
             return Response(content=open(zip_path+".zip", 'rb').read(), media_type="application/zip")
-    except:
-        return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
 # TRAINING PHASE
 
@@ -214,8 +209,7 @@ async def getTrain(request: Request, session_data: SessionData = Depends(verifie
                     sessions.append(f)
             return templates.TemplateResponse("Training/training.html", {"request": request, "sessions": sessions})
         except: return templates.TemplateResponse("Utils/noFiles.html", {"request": request, "user_name": session_data.username})
-    except:
-        return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
 
 @app.post("/train/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
@@ -247,5 +241,4 @@ style : str = Form(...)):
             return "correcto"
 
         except: "incorrecto"
-    except:
-        return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
