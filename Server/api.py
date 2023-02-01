@@ -59,11 +59,11 @@ async def postLogin(request: Request, response: Response, name: str = Form(...),
         if name == "Name":
             return "singup"
         else:
-            users[email] = [name, email, password]
             session = uuid4()
             data = SessionData(username=email)
             await backend.create(session, data)
             cookie.attach_to_response(response, session)
+            users[data.username] = [name, email, password]
             return "correct"
 
 
