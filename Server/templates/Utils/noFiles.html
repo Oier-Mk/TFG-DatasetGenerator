@@ -1,0 +1,26 @@
+{% extends 'index.html' %}
+{% block section %}
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <link rel="stylesheet" href={{ url_for('static', path="/assets/css/cropper.css" ) }}>
+   </head>
+   <body>
+    <div id="contact-section" class="pad-sec">
+      <div class="container">
+        <div class="title-section text-center animated out" data-animation="fadeInUp" data-delay="0">
+            <div class="row">
+               <div class="col-sm-8 col-sm-offset-2">
+                  <h2>Uups!</h2>
+                  <hr>
+                  <p>Hmm, it looks like there are not files for you {{user_name}}. </p>
+                  <hr>
+                  <img src={{url_for('static', path="/assets/images/error.png")}} width="25%" height="auto">
+               </div>
+         </div>
+         </div>
+      </div>
+      
+    </div>
+{% endblock %}

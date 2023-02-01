@@ -94,10 +94,8 @@ async def logout(response: Response, session_id: UUID = Depends(cookie)):
 
 @app.get("/uploadImages/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
 async def uploadImages(request: Request, session_data: SessionData = Depends(verifier)):
-    try:
-        return templates.TemplateResponse("Cropping/cropImages.html", {"request": request, "name": session_data.username})
-    except:
-        return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+    try: return templates.TemplateResponse("Cropping/cropImages.html", {"request": request, "name": session_data.username})
+    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
 
 @app.post("/cropImages/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
@@ -124,42 +122,43 @@ async def cropImages(request: Request, session_data: SessionData = Depends(verif
 @app.get("/fileExplorer/{session}", response_class=HTMLResponse, dependencies=[Depends(cookie)])
 async def fileExplorer(request: Request, session: str, session_data: SessionData = Depends(verifier)):
     try:
-        # muestro las sesiones del usuario
-        directory = os.path.join(os.getcwd(), "static",
-                                 "uploadedPictures", session_data.username)
-        sessions = []
-        for f in os.listdir(directory):
-            if (f != ".DS_Store"):
-                sessions.append(f)
-
-        # por defecto muestro la primera sesion del usuario.
-        if (session != "ftm"):
-            for f in os.listdir(directory):
-                if (f == session):
-                    folder_path = os.path.join(directory, f)
-                    folder = os.listdir(folder_path)
-                    break
-        else:
+        try:
+            # muestro las sesiones del usuario
+            directory = os.path.join(os.getcwd(), "static",
+                                    "uploadedPictures", session_data.username)
+            sessions = []
             for f in os.listdir(directory):
                 if (f != ".DS_Store"):
-                    folder_path = os.path.join(directory, f)
-                    folder = os.listdir(folder_path)
-                    break
+                    sessions.append(f)
 
-        folder_path = folder_path.split("static/")[1]
+            # por defecto muestro la primera sesion del usuario.
+            if (session != "ftm"):
+                for f in os.listdir(directory):
+                    if (f == session):
+                        folder_path = os.path.join(directory, f)
+                        folder = os.listdir(folder_path)
+                        break
+            else:
+                for f in os.listdir(directory):
+                    if (f != ".DS_Store"):
+                        folder_path = os.path.join(directory, f)
+                        folder = os.listdir(folder_path)
+                        break
 
-        folder = [folder_path + os.path.sep + file for file in folder]
+            folder_path = folder_path.split("static/")[1]
 
-        for i in folder:
-            if i.endswith('.DS_Store'):
-                folder.remove(i)
+            folder = [folder_path + os.path.sep + file for file in folder]
 
-        n = 3
-        folder = [folder[i:i+n] for i in range(0, len(folder), n)]
+            for i in folder:
+                if i.endswith('.DS_Store'):
+                    folder.remove(i)
 
-        return templates.TemplateResponse("FileExplorer/fileExplorer.html", {"request": request, "sessions": sessions, "folder": folder, "user_name": session_data.username})
-    except:
-        return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+            n = 3
+            folder = [folder[i:i+n] for i in range(0, len(folder), n)]
+
+            return templates.TemplateResponse("FileExplorer/fileExplorer.html", {"request": request, "sessions": sessions, "folder": folder, "user_name": session_data.username})
+        except: return templates.TemplateResponse("Utils/noFiles.html", {"request": request, "user_name": session_data.username})
+    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
 # DOWNLOAD BUTTON
 
@@ -194,14 +193,16 @@ async def download(request: Request, session: str, session_data: SessionData = D
 @app.get("/train/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
 async def getTrain(request: Request, session_data: SessionData = Depends(verifier)):
     try:
-        # muestro las sesiones del usuario
-        directory = os.path.join(
-            os.getcwd(), "static", "uploadedPictures", session_data.username)
-        sessions = []
-        for f in os.listdir(directory):
-            if (f != ".DS_Store"):
-                sessions.append(f)
-        return templates.TemplateResponse("Training/training.html", {"request": request, "sessions": sessions})
+        try:
+            # muestro las sesiones del usuario
+            directory = os.path.join(
+                os.getcwd(), "static", "uploadedPictures", session_data.username)
+            sessions = []
+            for f in os.listdir(directory):
+                if (f != ".DS_Store"):
+                    sessions.append(f)
+            return templates.TemplateResponse("Training/training.html", {"request": request, "sessions": sessions})
+        except: return templates.TemplateResponse("Utils/noFiles.html", {"request": request, "user_name": session_data.username})
     except:
         return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
@@ -222,11 +223,11 @@ style : str = Form(...)):
             print(session)
             print(resume_training)
             print(unet_training)
-            print(unet_learning)
+            print(unet_learning) 
             print(encoder_training)
             print(concept_training)
             print(encoder_learning)
-            print(style)
+            print(style) 
 
             # TODO: proceder a entrenar
 

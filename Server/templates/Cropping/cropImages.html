@@ -205,7 +205,9 @@
             method: "POST",
             body: formData
           })
-          window.location.href = '/train/'
+            .then(data => {
+              window.location.href = '/train/';
+            });
         });
 
 
