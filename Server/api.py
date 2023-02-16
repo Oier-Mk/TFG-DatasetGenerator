@@ -18,7 +18,7 @@ from database.database import *
 
 app = FastAPI()
 
-# LOAD STATIC FILES
+# STATIC FILES
 
 app.mount(
     "/static",
@@ -32,7 +32,9 @@ templates = Jinja2Templates(directory="templates")
 
 # LOAD EMAIL CONFIG
 
-conf = load_email(".env")
+envMail = load_email(".env")
+
+envDDBB = "/Users/mentxaka/Github/TFG-DatasetGenerator/Server/.envDDBB"
 
 # HOME
 
@@ -54,8 +56,8 @@ async def getLogin(request: Request, session_data: SessionData = Depends(verifie
 @app.post("/login/", response_class=HTMLResponse)
 async def postLogin(request: Request, response: Response, name: str = Form(...), email: str = Form(...), password: str = Form(...), password2: str = Form(...)):
     print(email + " - " + password)
-    if user_exists(email):
-        if (get_password(email) == password):
+    if user_exists(envDDBB, email):
+        if (get_password(envDDBB, email) == password):
             session = uuid4()
             data = SessionData(username=email)
             await backend.create(session, data)
@@ -71,13 +73,16 @@ async def postLogin(request: Request, response: Response, name: str = Form(...),
             data = SessionData(username=email)
             await backend.create(session, data)
             cookie.attach_to_response(response, session)
-            insert_user(email, name, password)
+            print(data.username)
+            insert_user(envDDBB, email, name, password)
             return "correct"
 
 
 @app.get("/correct-login/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
 async def correctLogin(request: Request, session_data: SessionData = Depends(verifier)):
-    try: return templates.TemplateResponse("Login/correctLogin.html", {"request": request, "name": session_data.username})
+    try: 
+        print(session_data.username)
+        return templates.TemplateResponse("Login/correctLogin.html", {"request": request, "name": session_data.username})
     except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
 
@@ -234,7 +239,7 @@ style : str = Form(...)):
             print(encoder_learning)
             print(style) 
 
-            await send_email(conf, session_data.username, "Training completed", "Your training has been completed. You can now use the application.")
+            await send_email(envMail, session_data.username, "Training completed", "Your training has been completed. You can now use the application.")
 
             # TODO: proceder a entrenar
 

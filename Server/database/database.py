@@ -7,9 +7,9 @@ def delete_database():
     db = con.connect(host='localhost', user=conf["MYSQL_USERNAME"], passwd=conf["MYSQL_PASSWORD"])
     db.cursor().execute("DROP DATABASE DatasetGenerator")
 
-def load_database(): 
+def load_database(env): 
+    conf = dotenv.dotenv_values(env)
     try:
-        conf = dotenv.dotenv_values("/Users/mentxaka/Github/TFG-DatasetGenerator/Server/.envDDBB")
         db=con.connect(host="localhost", user=conf["MYSQL_USERNAME"], password=conf["MYSQL_PASSWORD"], database="DatasetGenerator")
     except con.Error as err:
         if err.errno == errorcode.ER_BAD_DB_ERROR:
@@ -20,8 +20,8 @@ def load_database():
             db.cursor().execute("CREATE TABLE Users (mail VARCHAR(50) PRIMARY KEY, name VARCHAR(50), password VARCHAR(50))")
     return db
 
-def insert_user(mail, name, password):
-    db = load_database()
+def insert_user(env, mail, name, password):
+    db = load_database(env)
     mycursor = db.cursor()
     try:
         mycursor.execute("INSERT INTO Users (mail, name, password) VALUES (%s,%s,%s)", (mail, name, password))
@@ -32,8 +32,8 @@ def insert_user(mail, name, password):
         print(err)
     db.close()
 
-def get_user(mail):
-    db = load_database()
+def get_user(env, mail):
+    db = load_database(env)
     mycursor = db.cursor()
     try:
         mycursor.execute("SELECT password FROM Users WHERE mail = %s", (mail, ))
@@ -46,8 +46,8 @@ def get_user(mail):
         db.close()
         return None
 
-def user_exists(mail):
-    db = load_database()
+def user_exists(env, mail):
+    db = load_database(env)
     mycursor = db.cursor()
     try:
         mycursor.execute("SELECT mail FROM Users WHERE mail = %s", (mail, ))
@@ -57,8 +57,8 @@ def user_exists(mail):
     except:
         return False
 
-def get_password(mail):
-    db = load_database()
+def get_password(env, mail):
+    db = load_database(env)
     mycursor = db.cursor()
     try:
         mycursor.execute("SELECT password FROM Users WHERE mail = %s", (mail, ))
@@ -71,8 +71,8 @@ def get_password(mail):
         db.close()
         return None
 
-def print_users():
-    db = load_database()
+def print_users(env):
+    db = load_database(env)
     mycursor = db.cursor()
     mycursor.execute("SELECT * FROM Users")
     result = mycursor.fetchall()
