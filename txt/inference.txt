@@ -1,0 +1,83 @@
+inference.txt
+
+        "--prompt",
+        default="a painting of a virus monster playing guitar",
+        help="the prompt to render"
+
+        "--outdir",
+        help="dir to write results to",
+        default="outputs/txt2img-samples"
+
+        "--skip_grid",
+        action='store_true',
+        help="do not save a grid, only individual samples. Helpful when evaluating lots of samples",
+
+        "--skip_save",
+        action='store_true',
+        help="do not save individual samples. For speed measurements.",
+
+        "--ddim_steps",
+        type=int,
+        default=50,
+        help="number of ddim sampling steps",
+
+        "--plms",
+        action='store_true',
+        help="use plms sampling",
+
+        "--dpm_solver",
+        action='store_true',
+        help="use dpm_solver sampling",
+
+        "--laion400m",
+        action='store_true',
+        help="uses the LAION400M model",
+
+        "--fixed_code",
+        action='store_true',
+        help="if enabled, uses the same starting code across samples ",
+
+        "--ddim_eta",
+        default=0.0,
+        help="ddim eta (eta=0.0 corresponds to deterministic sampling",
+
+        "--n_iter",
+        default=2,
+        help="sample this often",
+
+        "--f",
+        default=8,
+        help="downsampling factor",
+
+        "--n_samples",
+        default=3,
+        help="how many samples to produce for each given prompt. A.k.a. batch size",
+
+        "--n_rows",
+        default=0,
+        help="rows in the grid (default: n_samples)",
+
+        "--scale",
+        default=7.5,
+        help="unconditional guidance scale: eps = eps(x, empty) + scale * (eps(x, cond) - eps(x, empty))",
+
+        "--from-file",
+        help="if specified, load prompts from this file",
+
+        "--config",
+        default="configs/stable-diffusion/v1-inference.yaml",
+        help="path to config which constructs model",
+
+        "--ckpt",
+        default="models/ldm/stable-diffusion-v1/model.ckpt",
+        help="path to checkpoint of model",
+
+        "--seed",
+        default=42,
+        help="the seed (for reproducible sampling)",
+
+        "--precision",
+        help="evaluate at this precision",
+        choices=["full", "autocast"],
+        default="autocast"
+    

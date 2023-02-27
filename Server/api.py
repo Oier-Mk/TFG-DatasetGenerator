@@ -69,13 +69,16 @@ async def postLogin(request: Request, response: Response, name: str = Form(...),
         if name == "Name":
             return "singup"
         else:
-            session = uuid4()
-            data = SessionData(username=email)
-            await backend.create(session, data)
-            cookie.attach_to_response(response, session)
-            print(data.username)
-            insert_user(envDDBB, email, name, password)
-            return "correct"
+            if (password != password2):
+                return "incorrect"
+            else:
+                session = uuid4()
+                data = SessionData(username=email)
+                await backend.create(session, data)
+                cookie.attach_to_response(response, session)
+                print(data.username)
+                insert_user(envDDBB, email, name, password)
+                return "correct"
 
 
 @app.get("/correct-login/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
@@ -102,7 +105,6 @@ async def logout(response: Response, session_id: UUID = Depends(cookie)):
         e.printstack()
 
 # UPLOADING IMAGES
-
 
 @app.get("/uploadImages/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
 async def uploadImages(request: Request, session_data: SessionData = Depends(verifier)):
