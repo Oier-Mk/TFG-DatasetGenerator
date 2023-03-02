@@ -2,8 +2,9 @@
 .envDDBB
 .DS_Store
 .DS_Store*
-**env
+
 *__pycache__*
 .DS_Store
-Research/model/
+**Models
+*.ipynb
 *.zip

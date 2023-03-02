@@ -1,22 +1,20 @@
-# make sure you're logged in with `huggingface-cli login`
-from diffusers import StableDiffusionPipeline
+# https://huggingface.co/docs/diffusers/api/pipelines/stable_diffusion/text2img
 
-pipe = StableDiffusionPipeline.from_pretrained("/Users/mentxaka/Github/TFG-DatasetGenerator/investigation/model")
-# pipe = StableDiffusionPipeline.from_pretrained("runwayml/stable-diffusion-v1-5")
-# pipe = StableDiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-2-base")
+from diffusers import StableDiffusionPipeline, LMSDiscreteScheduler
 
-pipe = pipe.to("mps")
+def infere(model, prompt = "a car", nSteps = 20, element = "car", nImages = 1):
+    pipe = StableDiffusionPipeline.from_pretrained(pretrained_model_name_or_path = model)
 
-# Recommended if your computer has < 64 GB of RAM
-pipe.enable_attention_slicing()
+    pipe = pipe.to("mps")
 
-prompt = "a WholeBiscuit27022023"
+    pipe.enable_attention_slicing()
 
-# # First-time "warmup" pass (see explanation above)
-# _ = pipe(prompt, num_inference_steps=1)
+    _ = pipe(prompt, num_inference_steps=1)
 
-# Results match those from the CPU device after the warmup pass.
-image = pipe(prompt).images[0]
+    for i in range(nImages):
+        image = pipe(prompt, num_inference_steps = nSteps).images[0] #batch size num_images_per_prompt 
+        image.save(element+" "+str(i)+".png")
 
-# Save the image
-image.save("image.png")
+    return True
+
+infere(model = "/Users/mentxaka/GitHub/TFG-DatasetGenerator/Research/Models/WholeBiscuit022032023", nSteps = 30, prompt = "a WholeBiscuit27022023", element = "WholeBiscuit27022023")
