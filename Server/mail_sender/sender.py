@@ -1,12 +1,11 @@
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from dotenv import dotenv_values
-
 def load_email(env):
     config = dotenv_values(env)
     conf = ConnectionConfig(
         MAIL_USERNAME = config["MAIL_USERNAME"],
         MAIL_PASSWORD = config["MAIL_PASSWORD"],
-        MAIL_FROM = config["MAIL_FROM"],
+        MAIL_FROM = config["MAIL_FROM"], 
         MAIL_PORT = 587,
         MAIL_SERVER = "smtp.gmail.com",
         MAIL_FROM_NAME="ds.generator",

@@ -8,10 +8,12 @@ def delete_database():
     db.cursor().execute("DROP DATABASE DatasetGenerator")
 
 def load_database(env): 
+    print(env)
     conf = dotenv.dotenv_values(env)
     try:
         db=con.connect(host="localhost", user=conf["MYSQL_USERNAME"], password=conf["MYSQL_PASSWORD"], database="DatasetGenerator")
     except con.Error as err:
+        print(err.errno)
         if err.errno == errorcode.ER_BAD_DB_ERROR:
             db = con.connect(host='localhost', user=conf["MYSQL_USERNAME"], passwd=conf["MYSQL_PASSWORD"])
             db.cursor().execute("CREATE DATABASE DatasetGenerator")
