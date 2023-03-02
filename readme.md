@@ -5,7 +5,7 @@ This project aims to increase the number of images in a small dataset, making it
 The server for training and executing Stable Diffusion will be built using FastAPI and will be designed to work remotely.
 
 HOWTO execute server:
-  1. uvicorn DatasetGenerator:app --reload
+  1. `uvicorn DatasetGenerator:app --reload`
 
 For receiving in a web:
   1. Go to http://127.0.0.1:8000/
