@@ -55,8 +55,6 @@ def infere(model, prompt = "a car", nSteps = 20, element = "car", nImages = 1, s
 
     pipe.enable_attention_slicing()
 
-    #_ = pipe(prompt, num_inference_steps=1)
-
     for i in range(nImages):
         image = pipe(prompt, num_inference_steps = nSteps).images[0] #batch_size = num_images_per_prompt 
         image.save(element+" "+str(i)+".png")
