@@ -6,5 +6,7 @@
 *__pycache__*
 .DS_Store
 **Models
+**Pdf
+**Txt
 *.ipynb
 *.zip
