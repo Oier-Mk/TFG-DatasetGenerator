@@ -79,7 +79,7 @@ def train(
     print('\n[1;32mDone, proceed to the training cell')
 
   def dump_only_textenc(train_only_text_encoder, pretrained_model_name_or_path, instance_data_dir, output_dir, instance_prompt, GC, precision, learning_rate, max_train_steps):
-      cmd = f'''!accelerate launch /content/diffusers/examples/dreambooth/train_dreambooth.py \
+      cmd = f'''accelerate launch /content/diffusers/examples/dreambooth/train_dreambooth.py \
         {train_only_text_encoder} \
         --image_captions_filename \
         --train_text_encoder \
@@ -106,7 +106,7 @@ def train(
           print('Resuming Training...')
       print('Training the UNet...')
 
-      cmd = f'''!accelerate launch /content/diffusers/examples/dreambooth/train_dreambooth.py \
+      cmd = f'''accelerate launch /content/diffusers/examples/dreambooth/train_dreambooth.py \
         {style} \
         --stop_text_encoder_training={Text_Encoder_Training_Steps} \
         --train_only_unet \
