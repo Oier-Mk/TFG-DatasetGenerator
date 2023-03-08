@@ -7,3 +7,5 @@
 **Txt
 *.ipynb
 *.zip
+**SchedulersOutputs
+**Outputs
