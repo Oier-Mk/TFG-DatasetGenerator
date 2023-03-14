@@ -8,7 +8,7 @@ KarrasVeScheduler, UniPCMultistepScheduler, ScoreSdeVeScheduler, VQDiffusionSche
 import os
 import time
 
-def infere(model, prompt = "a car", nSteps = 20, element = "car", nImages = 1, scheduler = "PNDM"):
+def infere(model, prompt = "a car", nSteps = 20, element = "car", nImages = 1, scheduler = "PNDM", test = False):
 
     schedulerStr= scheduler
     print(schedulerStr)
@@ -60,37 +60,27 @@ def infere(model, prompt = "a car", nSteps = 20, element = "car", nImages = 1, s
 
     pipe.enable_attention_slicing()
 
-    try: os.mkdir(element+"-"+str(nSteps)+"/")
-    except: pass
-
-    # start the timer
-    start_time = time.perf_counter()
-
-    for i in range(nImages):
+    if test:
         image = pipe(prompt, num_inference_steps = nSteps).images[0] #batch_size = num_images_per_prompt 
-        image.save(element+"-"+str(nSteps)+"/"+element+" "+str(nSteps)+" "+str(i)+".png")
+        image_path = element+"-"+str(nSteps)+"/"+element+" "+str(nSteps)+" "+str(0)+".png"
+        image.save(image_path)   
+        return image_path
+    else:
+        try: os.mkdir(element+"-"+str(nSteps)+"/")
+        except: pass
+
+        # start the timer
+        start_time = time.perf_counter()
+
+        for i in range(nImages):
+            image = pipe(prompt, num_inference_steps = nSteps).images[0] #batch_size = num_images_per_prompt 
+            image.save(element+"-"+str(nSteps)+"/"+element+" "+str(nSteps)+" "+str(i)+".png")
 
 
-    # end the timer
-    end_time = time.perf_counter()
+        # end the timer
+        end_time = time.perf_counter()
 
-    # calculate the time taken
-    time_taken = end_time - start_time - 0.07931395899504423*nImages
+        # calculate the time taken
+        time_taken = end_time - start_time - 0.07931395899504423*nImages
 
-    return time_taken
-
-# folderName = "Biscuits9E-6Stp1200"
-
-# model = "/Users/mentxaka/GitHub/TFG-DatasetGenerator/Research/Models/"+folderName
-# prompt = "a "+folderName
-# nSteps = 20
-# element = folderName
-# nImages = 10
-# schedulers = [
-#     "DDIM","DDIMinverse","DDPM","DEIS","DPM","DPMA","EulerA","Euler","Heun","PNDM",
-#     "LinearMultistep","MultistepDPM","PNDM","RePaint","SinglestepDPM","Kerras","UniPC","VE-SDE","VP-SDE", "VODiffusionScheduler"
-# ]
-# scheduler = schedulers[12]
-
-# process_time = infere(model, prompt, nSteps, element, nImages, scheduler)
-# print(process_time)
+        return time_taken

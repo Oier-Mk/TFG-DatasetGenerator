@@ -11,6 +11,8 @@ from mail_sender.sender import *
 from user_management.sessions import *
 from database.database import *
 
+from stable_diffusion import show_results, get_sessions, get_results, train_model, test_model, generate_dataset
+
 
 #delete_database()
 
@@ -140,35 +142,10 @@ async def fileExplorer(request: Request, session: str, session_data: SessionData
             # muestro las sesiones del usuario
             directory = os.path.join(os.getcwd(), "static",
                                     "uploadedPictures", session_data.username)
-            sessions = []
-            for f in os.listdir(directory):
-                if (f != ".DS_Store"):
-                    sessions.append(f)
+            
+            sessions = get_sessions(session, directory)
 
-            # por defecto muestro la primera sesion del usuario.
-            if (session != "ftm"):
-                for f in os.listdir(directory):
-                    if (f == session):
-                        folder_path = os.path.join(directory, f)
-                        folder = os.listdir(folder_path)
-                        break
-            else:
-                for f in os.listdir(directory):
-                    if (f != ".DS_Store"):
-                        folder_path = os.path.join(directory, f)
-                        folder = os.listdir(folder_path)
-                        break
-
-            folder_path = folder_path.split("static/")[1]
-
-            folder = [folder_path + os.path.sep + file for file in folder]
-
-            for i in folder:
-                if i.endswith('.DS_Store'):
-                    folder.remove(i)
-
-            n = 3
-            folder = [folder[i:i+n] for i in range(0, len(folder), n)]
+            folder = show_results(session, directory)
 
             return templates.TemplateResponse("FileExplorer/fileExplorer.html", {"request": request, "sessions": sessions, "folder": folder, "user_name": session_data.username})
         except: return templates.TemplateResponse("Utils/noFiles.html", {"request": request, "user_name": session_data.username})
@@ -180,24 +157,8 @@ async def fileExplorer(request: Request, session: str, session_data: SessionData
 @app.get("/download/{session}", dependencies=[Depends(cookie)])
 async def download(request: Request, session: str, session_data: SessionData = Depends(verifier)):
     try:
-        if (session == "ftm"):
-            session = os.listdir(os.path.join(
-                os.getcwd(), "static", "uploadedPictures", session_data.username))[0]
-        if (session != "ftm"):
-
-            folder_path = os.path.join(
-                os.getcwd(), "static", "uploadedPictures", session_data.username, session)
-
-            zip_path = os.path.join(
-                os.getcwd(), "static", "uploadedPictures", "compressed", session_data.username)
-            if not os.path.exists(zip_path):
-                os.makedirs(zip_path)
-            zip_path = os.path.join(os.getcwd(
-            ), "static", "uploadedPictures", "compressed", session_data.username, session)
-
-            shutil.make_archive(zip_path, "zip", folder_path)
-
-            return Response(content=open(zip_path+".zip", 'rb').read(), media_type="application/zip")
+        zip_path = get_results(session, session_data)
+        return Response(content=open(zip_path, 'rb').read(), media_type="application/zip")
     except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
 # TRAINING PHASE
@@ -232,20 +193,41 @@ style : str = Form(...)):
     try:
         session_data.username
         try:
-            print(session) 
-            print(resume_training)
-            print(unet_training)
-            print(unet_learning) 
-            print(encoder_training)
-            print(concept_training)
-            print(encoder_learning)
-            print(style) 
 
-            await send_email(envMail, session_data.username, "Training completed", "Your training has been completed. You can now use the application.")
+            train_model(session, session_data, envMail,
+                        resume_training, 
+                        unet_training, 
+                        unet_learning, 
+                        encoder_training, 
+                        concept_training, 
+                        encoder_learning, 
+                        style)
 
-            # TODO: proceder a entrenar
+        except: "incorrecto"
+    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
-            return "correcto"
+@app.post("/train/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
+async def postTrain(request: Request, session_data: SessionData = Depends(verifier), 
+session : str = Form(...),
+model : str = Form(...), 
+prompt : str = Form(...), 
+nSteps : str = Form(...), 
+element : str = Form(...),
+scheduler : str = Form(...)
+): 
+    try:
+        session_data.username
+        try:
 
+            picture = test_model(session, 
+                       model, 
+                       prompt, 
+                       nSteps, 
+                       element, 
+                       scheduler, 
+                       )
+            
+            #TODO posiblemente este mal
+            return templates.TemplateResponse("Utils/confirmation.html", {"request": request, picture: picture})
         except: "incorrecto"
     except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
