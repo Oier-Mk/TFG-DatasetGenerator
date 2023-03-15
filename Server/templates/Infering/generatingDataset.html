@@ -13,9 +13,9 @@
     <div class="title-section text-center animated out" data-animation="fadeInUp" data-delay="0">
       <div class="row">
         <div class="col-sm-8 col-sm-offset-2">
-          <h2>Infering!</h2>
+          <h2>Generate your own dataset!</h2>
           <hr>
-          <p>Lets start with the inference process filling the parameters bellow.</p>
+          <p>Lets start with the generation of the dataset with the parametes desired.</p>
         </div>
       </div>
       <!-- form fields -->
@@ -31,6 +31,10 @@
               {% endfor %}
             </select>
 
+            <label class="form-control br-b" for="name">Add the name of the dataset</label>
+            <p id="nameError" style="color: red;">The element is empty!</p>
+            <input class="form-control br-b" type="text" id="name" value="DefaultBiscuitNEW"  >
+
             <label class="form-control br-b" for="element">Add the name of the element trained on the model</label>
             <p id="elementError" style="color: red;">The element is empty!</p>
             <input class="form-control br-b" type="text" id="element" value="DefaultBiscuit"  >
@@ -42,6 +46,10 @@
             <label class="form-control br-b" for="nIterations">Add the number of iterations</label>
             <input class="form-control br-b" type="range" id="nIterations" min="1" max="100" value="20" oninput="this.nextElementSibling.value = this.value">
             <output class="form-control br-b" for="nIterations"></output>
+
+            <label class="form-control br-b" for="nImages">Add the number of images</label>
+            <input class="form-control br-b" type="range" id="nImages" min="1" max="300" value="100" oninput="this.nextElementSibling.value = this.value">
+            <output class="form-control br-b" for="nImages"></output>
 
             <label class="form-control br-b" for="scheduler">Choose the scheduler you want to use</label>
             <select id="scheduler">
@@ -86,6 +94,8 @@
     test.style.display = "none";    
     var load = document.getElementById("load");
     load.style.display = "none";
+    var nameError = document.getElementById("nameError");
+    nameError.style.display = "none";    
     var elementError = document.getElementById("elementError");
     elementError.style.display = "none";    
     var promptError = document.getElementById("promptError");
@@ -93,16 +103,23 @@
   });
 
   document.getElementById("submit").addEventListener("click", async function () {
+    var name = document.getElementById("name").value;
     var model = document.getElementById("model").value;
     var element = document.getElementById("element").value;
     var prompt = document.getElementById("prompt").value;
     var nIterations = document.getElementById("nIterations").value;
+    var nImages = document.getElementById("nImages").value;
     var scheduler = document.getElementById("scheduler").value;
     var test = document.getElementById("test");
     var load = document.getElementById("load");
+    var nameError = document.getElementById("elementError");
     var elementError = document.getElementById("elementError");
     var promptError = document.getElementById("promptError");
 
+    if (name == "") {
+      nameError.style.display = "inline";
+      return;
+    }        
     if (element == "") {
       elementError.style.display = "inline";
       return;
@@ -114,24 +131,33 @@
 
     load.style.display = "inline";
 
+    console.log("name: " + name + " " + typeof name);
+    console.log("model: " + model + " " + typeof model);
+    console.log("element: " + element + " " + typeof element);
+    console.log("prompt: " + prompt + " " + typeof prompt);
+    console.log("nIterations: " + nIterations + " " + typeof nIterations);
+    console.log("nImages: " + nImages + " " + typeof nImages);
+    console.log("scheduler: " + scheduler + " " + typeof scheduler);
+
     const formData = new FormData();
+    formData.append("name", name);
     formData.append("model", model);
     formData.append("element", element);
     formData.append("nIterations", nIterations.toString());
+    formData.append("nImages", nImages.toString());
     formData.append("prompt", prompt);
     formData.append("scheduler", scheduler);
 
-    fetch("/infere/", {
+    fetch("/generate/", {
       method: "POST",
       body: formData,
-    })
-      .then(response => response.json())
-      .then(data => {
-        load.style.display = "none";
-        document.getElementById("test").src = `data:image/png;base64,${data.image}`; //todo cambiar como recibir la foto y poner el gif mientras se
-        test.style.display = "inline";
-      })
-      .catch(error => console.error(error));
+    }).then(response => response.text())
+          .then(result => {
+            if (result === 'correct') {
+              console.log("correct")
+              window.location.href = '/correct-generation/';
+          }
+    });
   });
 
 </script>

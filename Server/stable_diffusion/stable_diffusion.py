@@ -1,12 +1,13 @@
 from stable_diffusion.train import train
 from stable_diffusion.inference import infereDataset, infereTest
-from mail_sender.sender import send_email
 import os 
 import shutil
+import threading
 
 async def train_model(session_data, envMail, input_Dataset, input_Session_Name, input_Concept, input_Resume_Training, input_UNet_Training_Steps, input_UNet_Learning_Rate, input_Text_Encoder_Training_Steps, input_Text_Encoder_Concept_Training_Steps, input_Text_Encoder_Learning_Rate, input_Save_Checkpoint_Every, input_Start_saving_from_the_step):
-    #session en este caso es el valor del dataset
-    train(
+    t = threading.Thread(target=infereDataset, args=(        
+        session_data, \
+        envMail, \
         input_Dataset, \
         input_Session_Name, \
         input_Concept, \
@@ -17,10 +18,8 @@ async def train_model(session_data, envMail, input_Dataset, input_Session_Name, 
         input_Text_Encoder_Concept_Training_Steps, \
         input_Text_Encoder_Learning_Rate, \
         input_Save_Checkpoint_Every, \
-        input_Start_saving_from_the_step
-    )
-    await send_email(envMail, session_data.username, "Training completed", "Your training has been completed. You can now use the application.")
-
+        input_Start_saving_from_the_step))
+    t.start()
 
 def test_model(session_data, temp_folder, model, prompt, nSteps, element, scheduler):
     infereTest(
@@ -33,15 +32,19 @@ def test_model(session_data, temp_folder, model, prompt, nSteps, element, schedu
         scheduler = scheduler,
     )
     
-def generate_dataset(session, model, prompt, nSteps, element, nImages, scheduler):
-    return infereDataset(
-        model, 
-        prompt = prompt, 
-        nSteps = nSteps, 
-        element = element, 
-        nImages = nImages, 
-        scheduler = scheduler
-    )
+def generate_dataset(username, envMail, name, model, prompt, nSteps, element, nImages, scheduler):
+    t = threading.Thread(target=infereDataset, args=(
+        username, \
+        envMail, \
+        name, \
+        model, \
+        prompt, \
+        nSteps, \
+        element, \
+        nImages, \
+        scheduler))
+    t.start()
+    print("Thread started")
 
 def get_sessions(session, directory):
     sessions = []

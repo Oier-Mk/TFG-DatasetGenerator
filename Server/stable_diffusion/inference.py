@@ -5,10 +5,12 @@ from diffusers import DiffusionPipeline, DDIMScheduler, DDIMInverseScheduler, DD
 KDPM2AncestralDiscreteScheduler, EulerAncestralDiscreteScheduler, EulerDiscreteScheduler, HeunDiscreteScheduler, \
 IPNDMScheduler, LMSDiscreteScheduler, DPMSolverMultistepScheduler, PNDMScheduler, RePaintScheduler, DPMSolverSinglestepScheduler, \
 KarrasVeScheduler, UniPCMultistepScheduler, ScoreSdeVeScheduler, VQDiffusionScheduler
+from mail_sender.sender import send_email
+
 import os
 import time
 
-def infereDataset(model, prompt = "a car", nSteps = 20, element = "car", nImages = 1, scheduler = "PNDM"):
+def infereDataset(username, envMail, name, model, prompt = "a car", nSteps = 20, element = "car", nImages = 1, scheduler = "PNDM"):
 
     schedulerStr= scheduler
     print(schedulerStr)
@@ -60,15 +62,19 @@ def infereDataset(model, prompt = "a car", nSteps = 20, element = "car", nImages
 
     pipe.enable_attention_slicing()
 
-    try: os.mkdir(element+"-"+str(nSteps)+"/")
-    except: pass
+    
+    path = "/".join([os.getcwd(), "static", "users", username, "datasets", name])
+    try: os.mkdir(path)
+    except: 
+        import traceback
+        traceback.print_exc()
 
     # start the timer
     start_time = time.perf_counter()
 
-    for i in range(nImages):
+    for i in range(int(nImages)):
         image = pipe(prompt, num_inference_steps = nSteps).images[0] #batch_size = num_images_per_prompt 
-        image.save(element+"-"+str(nSteps)+"/"+element+" "+str(nSteps)+" "+str(i)+".png")
+        image.save(path+"/"+element+"-"+str(i)+".png")
 
 
     # end the timer
@@ -76,6 +82,8 @@ def infereDataset(model, prompt = "a car", nSteps = 20, element = "car", nImages
 
     # calculate the time taken
     time_taken = end_time - start_time - 0.07931395899504423*nImages
+
+    send_email(envMail, username, "Dataset generation completed", "Your dataset has been generated. You can now use the application.")
 
     return time_taken
 
@@ -137,5 +145,7 @@ def infereTest(model, temp_folder, prompt = "a car", nSteps = 20, element = "car
     image.save(temp_folder+"/test.png")
     
     print(os.listdir(temp_folder))
+
+
 
  

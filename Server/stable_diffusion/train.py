@@ -5,8 +5,12 @@ import cv2
 import shutil
 from IPython.display import clear_output
 import subprocess
+from mail_sender.sender import send_email
+
   
-def train(
+async def train(
+  session_data, \
+  envMail, \
   input_Dataset, \
   input_Session_Name, \
   input_Concept = "", \
@@ -274,6 +278,9 @@ def train(
       prc="--fp16" if precision=="fp16" else ""
       print('[1;31mCompressing...')
       shutil.make_archive("/content/gdrive/Shareddrives/TFG-Oier-Mentxaka/models/"+Session_Name, 'zip', "/content/gdrive/Shareddrives/TFG-Oier-Mentxaka/models/"+Session_Name)
+      await send_email(envMail, session_data.username, "Training completed", "Your training has been completed. You can now use the application.")
       print('[1;32mTraining completed, model saved in /content/gdrive/Shareddrives/TFG-Oier-Mentxaka/models/'+Session_Name)
     else:
       print("[1;31mSomething went wrong")
+
+

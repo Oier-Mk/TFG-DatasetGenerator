@@ -138,7 +138,7 @@ async def cropImages(request: Request, session_data: SessionData = Depends(verif
             with open(session_dir + i.filename, "wb") as buffer:
                 buffer.write(i.file.read())
                 buffer.close()
-        return templates.TemplateResponse("/Utils/confirmation.html", {"request": request})
+        return templates.TemplateResponse("/Cropping/correctCrop.html", {"request": request})
     else:
         return templates.TemplateResponse("Utils/rejection.html", {"request": request})
 
@@ -287,46 +287,55 @@ scheduler : str = Form(...)
     except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
 
-# @app.get("/generate/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
-# async def getGenerate(request: Request, session_data: SessionData = Depends(verifier)):
-#     try:
-#         try:
-#             # muestro las sesiones del usuario
-#             directory = os.path.join(
-#                 os.getcwd(), "static", "users", session_data.username, "models")
-#             models = []
-#             for f in os.listdir(directory):
-#                 if (f != ".DS_Store"):
-#                     models.append(f)
-#             return templates.TemplateResponse("Infering/infering.html", {"request": request, "models": models})
-#         except: return templates.TemplateResponse("Utils/noFiles.html", {"request": request, "user_name": session_data.username})
-#     except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+@app.get("/generate/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
+async def getGenerate(request: Request, session_data: SessionData = Depends(verifier)):
+    try:
+        try:
+            # muestro las sesiones del usuario
+            directory = os.path.join(
+                os.getcwd(), "static", "users", session_data.username, "models")
+            models = []
+            for f in os.listdir(directory):
+                if (f != ".DS_Store"):
+                    models.append(f)
+            return templates.TemplateResponse("Infering/generatingDataset.html", {"request": request, "models": models})
+        except: return templates.TemplateResponse("Utils/noFiles.html", {"request": request, "user_name": session_data.username})
+    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
-# @app.post("/generate/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
-# async def postGenerate(request: Request, session_data: SessionData = Depends(verifier), 
-# model : str = Form(...), 
-# prompt : str = Form(...), 
-# nIterations : str = Form(...), 
-# nImages : str = Form(...), 
-# element : str = Form(...),
-# scheduler : str = Form(...)
-# ): 
-#     try:
-#         session_data.username
-#         try:
-#             generate_dataset(session_data, 
-#                        temp_folder,
-#                        os.path.join(os.getcwd(), "static",
-#                                     "users", session_data.username, "models", model), #add the path of the model in question
-#                        prompt, 
-#                        int(nIterations), 
-#                        int(nImages),
-#                        element, 
-#                        scheduler, 
-#                        )
-#             return "correcto"
-#         except: 
-#             import traceback
-#             traceback.print_exc()
-#             "incorrecto"
-#     except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+@app.post("/generate/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
+async def postGenerate(request: Request, session_data: SessionData = Depends(verifier), 
+name : str = Form(...), 
+model : str = Form(...), 
+prompt : str = Form(...), 
+nIterations : str = Form(...), 
+nImages : str = Form(...), 
+element : str = Form(...),
+scheduler : str = Form(...)
+): 
+    try:
+        session_data.username
+        print(session_data.username)
+        try:
+            generate_dataset(
+                session_data.username, 
+                envMail,
+                name, 
+                os.path.join(os.getcwd(), "static","users", session_data.username, "models", model), #add the path of the model in question
+                prompt, 
+                int(nIterations), 
+                element, 
+                int(nImages),
+                scheduler, 
+            )
+            return "correct"
+        except: return "incorrect"
+    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+
+@app.get("/correct-generation/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
+async def correctGeneration(request: Request, session_data: SessionData = Depends(verifier)):
+    try: return templates.TemplateResponse("Infering/correctGeneration.html", {"request": request, "user_name": session_data.username})
+    except: 
+        import traceback
+        traceback.print_exc()
+        return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+
