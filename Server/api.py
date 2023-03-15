@@ -38,7 +38,7 @@ templates = Jinja2Templates(directory="templates")
 
 # LOAD EMAIL CONFIG
 
-envMail = load_email(".env")
+envMail = ".env"
 
 envDDBB = "/Users/mentxaka/Github/TFG-DatasetGenerator/Server/.envDDBB"
 

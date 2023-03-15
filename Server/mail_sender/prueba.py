@@ -19,3 +19,20 @@ def send_email(envMail, receiver, subject, body):
         print(f'Error sending email: {str(e)}')
     finally:
         yag.close()
+
+# receiver_email = 'oime3564@gmail.com'
+# subject = 'Testing yagmail def'
+# body = 'This is a test email sent using yagmail.'
+
+# send_email(receiver_email, subject, body)
+
+
+
+# import keyring
+
+# service_name = "my_service"
+# username = "my_username"
+
+# # Delete password
+# keyring.delete_password(service_name, username)
+
