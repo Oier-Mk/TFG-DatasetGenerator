@@ -1,7 +1,10 @@
 from fastapi import FastAPI, Depends, UploadFile, Request, Form, Response
 import base64
 import time
+import json
 import os
+import tempfile
+import shutil
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -151,11 +154,8 @@ async def fileExplorer(request: Request, session: str, session_data: SessionData
             directory = os.path.join(os.getcwd(), "static",
                                     "users", session_data.username, "datasets")
                 
-            print(directory)
-
             sessions = get_sessions(session, directory)
-            print(sessions)
-
+            
             folder = show_results(session, directory)
 
             return templates.TemplateResponse("FileExplorer/fileExplorer.html", {"request": request, "sessions": sessions, "folder": folder, "user_name": session_data.username})
@@ -263,35 +263,70 @@ scheduler : str = Form(...)
     try:
         session_data.username
         try:
-            # picture = test_model(session_data, envMail, 
-            #            model, #add the path of the model in question
-            #            prompt, 
-            #            nIterations, 
-            #         #    nImages,
-            #            element, 
-            #            scheduler, 
-            #            )
 
-            # print("model: ", model)
-            # print("prompt: ", prompt)
-            # print("nIterations: ", nIterations)
-            # print("element: ", element)
-            # print("scheduler: ", scheduler)
+            temp_folder = tempfile.mkdtemp()
 
-            #wait 5 seconds
-            time.sleep(5)
+            test_model(session_data, 
+                       temp_folder,
+                       os.path.join(os.getcwd(), "static",
+                                    "users", session_data.username, "models", model), #add the path of the model in question
+                       prompt, 
+                       int(nIterations), 
+                    #    nImages,
+                       element, 
+                       scheduler, 
+                       )
 
-            picture = os.getcwd()+"/static/users/oiermentxaka@opendeusto.es/Birds/image1.png"
-            with open(picture, "rb") as image_file:
+            with open(temp_folder+"/test.png", "rb") as image_file:
                 encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
 
-            #picture...       
-            print('image: encoded image sent to the front')
-            import json
+            shutil.rmtree(temp_folder)
+
             return json.dumps({"image": encoded_string})
-            # return templates.TemplateResponse("Utils/confirmation.html", {"request": request, picture: picture})
-        except: 
-            import traceback
-            traceback.print_exc()
-            "incorrecto"
+        except: "incorrecto"
     except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+
+
+# @app.get("/generate/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
+# async def getGenerate(request: Request, session_data: SessionData = Depends(verifier)):
+#     try:
+#         try:
+#             # muestro las sesiones del usuario
+#             directory = os.path.join(
+#                 os.getcwd(), "static", "users", session_data.username, "models")
+#             models = []
+#             for f in os.listdir(directory):
+#                 if (f != ".DS_Store"):
+#                     models.append(f)
+#             return templates.TemplateResponse("Infering/infering.html", {"request": request, "models": models})
+#         except: return templates.TemplateResponse("Utils/noFiles.html", {"request": request, "user_name": session_data.username})
+#     except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+
+# @app.post("/generate/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
+# async def postGenerate(request: Request, session_data: SessionData = Depends(verifier), 
+# model : str = Form(...), 
+# prompt : str = Form(...), 
+# nIterations : str = Form(...), 
+# nImages : str = Form(...), 
+# element : str = Form(...),
+# scheduler : str = Form(...)
+# ): 
+#     try:
+#         session_data.username
+#         try:
+#             generate_dataset(session_data, 
+#                        temp_folder,
+#                        os.path.join(os.getcwd(), "static",
+#                                     "users", session_data.username, "models", model), #add the path of the model in question
+#                        prompt, 
+#                        int(nIterations), 
+#                        int(nImages),
+#                        element, 
+#                        scheduler, 
+#                        )
+#             return "correcto"
+#         except: 
+#             import traceback
+#             traceback.print_exc()
+#             "incorrecto"
+#     except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})

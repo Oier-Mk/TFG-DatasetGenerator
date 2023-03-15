@@ -1,5 +1,5 @@
 from stable_diffusion.train import train
-from stable_diffusion.inference import infere
+from stable_diffusion.inference import infereDataset, infereTest
 from mail_sender.sender import send_email
 import os 
 import shutil
@@ -22,19 +22,19 @@ async def train_model(session_data, envMail, input_Dataset, input_Session_Name, 
     await send_email(envMail, session_data.username, "Training completed", "Your training has been completed. You can now use the application.")
 
 
-def test_model(session, session_data, envMail, model, prompt, nSteps, element, scheduler):
-    infere(
+def test_model(session_data, temp_folder, model, prompt, nSteps, element, scheduler):
+    infereTest(
         model, 
+        temp_folder = temp_folder,
         prompt = prompt, 
         nSteps = nSteps, 
         element = element, 
         nImages = 1, 
         scheduler = scheduler,
-        test=True
     )
     
 def generate_dataset(session, model, prompt, nSteps, element, nImages, scheduler):
-    return infere(
+    return infereDataset(
         model, 
         prompt = prompt, 
         nSteps = nSteps, 
