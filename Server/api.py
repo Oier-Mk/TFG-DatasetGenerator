@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, UploadFile, Request, Form, Response
-import shutil
+import base64
+import time
 import os
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -11,7 +12,7 @@ from mail_sender.sender import *
 from user_management.sessions import *
 from database.database import *
 
-from stable_diffusion import show_results, get_sessions, get_results, train_model, test_model, generate_dataset
+from stable_diffusion.stable_diffusion import show_results, get_sessions, get_results, train_model, test_model, generate_dataset
 
 
 #delete_database()
@@ -74,12 +75,18 @@ async def postLogin(request: Request, response: Response, name: str = Form(...),
             if (password != password2):
                 return "incorrect"
             else:
+                time.sleep(1)
                 session = uuid4()
                 data = SessionData(username=email)
                 await backend.create(session, data)
                 cookie.attach_to_response(response, session)
                 print(data.username)
                 insert_user(envDDBB, email, name, password)
+                os.mkdir("static" + os.path.sep + "users" + os.path.sep + email)
+                os.mkdir("static" + os.path.sep + "users" + os.path.sep + email + os.path.sep + "inputs")
+                os.mkdir("static" + os.path.sep + "users" + os.path.sep + email + os.path.sep + "models")
+                os.mkdir("static" + os.path.sep + "users" + os.path.sep + email + os.path.sep + "datasets")
+                os.mkdir("static" + os.path.sep + "users" + os.path.sep + email + os.path.sep + "compressed")
                 return "correct"
 
 
@@ -117,9 +124,9 @@ async def uploadImages(request: Request, session_data: SessionData = Depends(ver
 @app.post("/cropImages/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
 async def cropImages(request: Request, session_data: SessionData = Depends(verifier), files: List[UploadFile] = Form(...), sessionName: str = Form(...)):
     if files:
-        session_dir = "static" + os.path.sep + os.path.sep + \
-            "uploadedPictures" + os.path.sep + session_data.username + \
-            os.path.sep + sessionName + os.path.sep
+        session_dir = "static" + os.path.sep + \
+            "users" + os.path.sep + session_data.username + \
+            os.path.sep + "inputs" + os.path.sep + sessionName + os.path.sep
         if not os.path.exists(session_dir):
             os.makedirs(session_dir)
 
@@ -140,15 +147,22 @@ async def fileExplorer(request: Request, session: str, session_data: SessionData
     try:
         try:
             # muestro las sesiones del usuario
+
             directory = os.path.join(os.getcwd(), "static",
-                                    "uploadedPictures", session_data.username)
-            
+                                    "users", session_data.username, "datasets")
+                
+            print(directory)
+
             sessions = get_sessions(session, directory)
+            print(sessions)
 
             folder = show_results(session, directory)
 
             return templates.TemplateResponse("FileExplorer/fileExplorer.html", {"request": request, "sessions": sessions, "folder": folder, "user_name": session_data.username})
-        except: return templates.TemplateResponse("Utils/noFiles.html", {"request": request, "user_name": session_data.username})
+        except: 
+            import traceback
+            traceback.print_exc()
+            return templates.TemplateResponse("Utils/noFiles.html", {"request": request, "user_name": session_data.username})
     except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
 # DOWNLOAD BUTTON
@@ -159,7 +173,10 @@ async def download(request: Request, session: str, session_data: SessionData = D
     try:
         zip_path = get_results(session, session_data)
         return Response(content=open(zip_path, 'rb').read(), media_type="application/zip")
-    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+    except: 
+        import traceback
+        traceback.print_exc()
+        return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
 # TRAINING PHASE
 
@@ -170,7 +187,7 @@ async def getTrain(request: Request, session_data: SessionData = Depends(verifie
         try:
             # muestro las sesiones del usuario
             directory = os.path.join(
-                os.getcwd(), "static", "uploadedPictures", session_data.username)
+                os.getcwd(), "static", "users", session_data.username, "inputs")
             sessions = []
             for f in os.listdir(directory):
                 if (f != ".DS_Store"):
@@ -193,6 +210,19 @@ style : str = Form(...)):
     try:
         session_data.username
         try:
+            # TODO cambiar los valores de los parametros por estos, faltan y no coinciden.
+            # train_model(session_data, envMail, 
+            #             input_Dataset, 
+            #             input_Session_Name, 
+            #             input_Concept, 
+            #             input_Resume_Training, 
+            #             input_UNet_Training_Steps, 
+            #             input_UNet_Learning_Rate, 
+            #             input_Text_Encoder_Training_Steps, 
+            #             input_Text_Encoder_Concept_Training_Steps, 
+            #             input_Text_Encoder_Learning_Rate, 
+            #             input_Save_Checkpoint_Every, 
+            #             input_Start_saving_from_the_step)
 
             train_model(session, session_data, envMail,
                         resume_training, 
@@ -202,32 +232,66 @@ style : str = Form(...)):
                         concept_training, 
                         encoder_learning, 
                         style)
-
+            #gesetionar crear modelo en la carpeta establecida
+            return "correcto" 
         except: "incorrecto"
     except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
-@app.post("/train/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
+@app.get("/infere/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
+async def getInfere(request: Request, session_data: SessionData = Depends(verifier)):
+    try:
+        try:
+            # muestro las sesiones del usuario
+            directory = os.path.join(
+                os.getcwd(), "static", "users", session_data.username, "models")
+            models = []
+            for f in os.listdir(directory):
+                if (f != ".DS_Store"):
+                    models.append(f)
+            return templates.TemplateResponse("Infering/infering.html", {"request": request, "models": models})
+        except: return templates.TemplateResponse("Utils/noFiles.html", {"request": request, "user_name": session_data.username})
+    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+
+@app.post("/infere/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
 async def postTrain(request: Request, session_data: SessionData = Depends(verifier), 
-session : str = Form(...),
 model : str = Form(...), 
 prompt : str = Form(...), 
-nSteps : str = Form(...), 
+nIterations : str = Form(...), 
 element : str = Form(...),
 scheduler : str = Form(...)
 ): 
     try:
         session_data.username
         try:
+            # picture = test_model(session_data, envMail, 
+            #            model, #add the path of the model in question
+            #            prompt, 
+            #            nIterations, 
+            #         #    nImages,
+            #            element, 
+            #            scheduler, 
+            #            )
 
-            picture = test_model(session, 
-                       model, 
-                       prompt, 
-                       nSteps, 
-                       element, 
-                       scheduler, 
-                       )
-            
-            #TODO posiblemente este mal
-            return templates.TemplateResponse("Utils/confirmation.html", {"request": request, picture: picture})
-        except: "incorrecto"
+            # print("model: ", model)
+            # print("prompt: ", prompt)
+            # print("nIterations: ", nIterations)
+            # print("element: ", element)
+            # print("scheduler: ", scheduler)
+
+            #wait 5 seconds
+            time.sleep(5)
+
+            picture = os.getcwd()+"/static/users/oiermentxaka@opendeusto.es/Birds/image1.png"
+            with open(picture, "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
+
+            #picture...       
+            print('image: encoded image sent to the front')
+            import json
+            return json.dumps({"image": encoded_string})
+            # return templates.TemplateResponse("Utils/confirmation.html", {"request": request, picture: picture})
+        except: 
+            import traceback
+            traceback.print_exc()
+            "incorrecto"
     except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})

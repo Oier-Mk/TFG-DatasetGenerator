@@ -1,10 +1,11 @@
-from train import train
-from inference import infere
-from email import send_email
+from stable_diffusion.train import train
+from stable_diffusion.inference import infere
+from mail_sender.sender import send_email
 import os 
 import shutil
 
-async def train_model(session, session_data, envMail, input_Dataset, input_Session_Name, input_Concept, input_Resume_Training, input_UNet_Training_Steps, input_UNet_Learning_Rate, input_Text_Encoder_Training_Steps, input_Text_Encoder_Concept_Training_Steps, input_Text_Encoder_Learning_Rate, input_Save_Checkpoint_Every, input_Start_saving_from_the_step):
+async def train_model(session_data, envMail, input_Dataset, input_Session_Name, input_Concept, input_Resume_Training, input_UNet_Training_Steps, input_UNet_Learning_Rate, input_Text_Encoder_Training_Steps, input_Text_Encoder_Concept_Training_Steps, input_Text_Encoder_Learning_Rate, input_Save_Checkpoint_Every, input_Start_saving_from_the_step):
+    #session en este caso es el valor del dataset
     train(
         input_Dataset, \
         input_Session_Name, \
@@ -21,7 +22,7 @@ async def train_model(session, session_data, envMail, input_Dataset, input_Sessi
     await send_email(envMail, session_data.username, "Training completed", "Your training has been completed. You can now use the application.")
 
 
-def test_model(session, model, prompt, nSteps, element, scheduler):
+def test_model(session, session_data, envMail, model, prompt, nSteps, element, scheduler):
     infere(
         model, 
         prompt = prompt, 
@@ -77,20 +78,21 @@ def show_results(session, directory):
 
 def get_results(session, session_data):
         if (session == "ftm"):
-            session = os.listdir(os.path.join(
-                os.getcwd(), "static", "uploadedPictures", session_data.username))[0]
+            directory = os.path.join(os.getcwd(), "static", "users", session_data.username, "datasets")
+            session = [file for file in os.listdir(directory) if file != ".DS_Store"][0]
+
         if (session != "ftm"):
 
             folder_path = os.path.join(
-                os.getcwd(), "static", "uploadedPictures", session_data.username, session)
+                os.getcwd(), "static", "users", session_data.username, "datasets", session)
 
-            zip_path = os.path.join(
-                os.getcwd(), "static", "uploadedPictures", "compressed", session_data.username)
-            if not os.path.exists(zip_path):
-                os.makedirs(zip_path)
-            zip_path = os.path.join(os.getcwd(
-            ), "static", "uploadedPictures", "compressed", session_data.username, session)
+        zip_path = os.path.join(
+            os.getcwd(), "static", "users", session_data.username, "compressed")
+        if not os.path.exists(zip_path):
+            os.makedirs(zip_path)
+        zip_path = os.path.join(os.getcwd(
+        ), "static", "users", session_data.username, "compressed", session)
 
-            shutil.make_archive(zip_path, "zip", folder_path)
+        shutil.make_archive(zip_path, "zip", folder_path)
 
-            return zip_path + ".zip"
+        return zip_path + ".zip"

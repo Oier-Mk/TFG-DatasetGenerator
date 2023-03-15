@@ -47,8 +47,6 @@ def infere(model, prompt = "a car", nSteps = 20, element = "car", nImages = 1, s
         scheduler = KarrasVeScheduler.from_pretrained(model, subfolder="scheduler")
     elif scheduler == "UniPC":
         scheduler = UniPCMultistepScheduler.from_pretrained(model, subfolder="scheduler")
-    elif scheduler == "VE-SDE":
-        scheduler = ScoreSdeVeScheduler.from_pretrained(model, subfolder="scheduler")
     elif scheduler == "VP-SDE":
         scheduler = VQDiffusionScheduler.from_pretrained(model, subfolder="scheduler")
     else:

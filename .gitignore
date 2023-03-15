@@ -1,11 +1,12 @@
 .env
 .envDDBB
 **.DS_Store
-**.pyc
+***.pyc
 **Research
 **Pdf
 **Txt
 *.ipynb
+*.bin
 *.zip
 **SchedulersOutputs
 **Outputs

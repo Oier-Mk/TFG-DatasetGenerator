@@ -1,0 +1,144 @@
+{% extends 'index.html' %}
+{% block section %}
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href={{ url_for('static', path="/assets/css/cropper.css" ) }}>
+</head>
+
+<div id="contact-section" class="pad-sec">
+  <div class="container">
+    <div class="title-section text-center animated out" data-animation="fadeInUp" data-delay="0">
+      <div class="row">
+        <div class="col-sm-8 col-sm-offset-2">
+          <h2>Infering!</h2>
+          <hr>
+          <p>Lets start with the inference process filling the parameters bellow.</p>
+        </div>
+      </div>
+      <!-- form fields -->
+      <form method="POST" action="/infere/" method="post" name="login" id="login" class="animated fadeInUp in"
+        data-animation="fadeInUp" data-delay="0">
+
+        <fieldset>
+          <div class="form-group">
+            <label class="form-control br-b" for="model">Choose one of your model</label>
+            <select id="model">
+              {% for model in models %}
+              <option class="form-control br-b" value="{{model}}">{{model}}</option>
+              {% endfor %}
+            </select>
+
+            <label class="form-control br-b" for="element">Add the name of the element trained on the model</label>
+            <p id="elementError" style="color: red;">The element is empty!</p>
+            <input class="form-control br-b" type="text" id="element" >
+
+            <label class="form-control br-b" for="prompt">Add a prompt of what you want to extract from the models</label>
+            <p id="promptError" style="color: red;">The prompt is empty!</p>
+            <input class="form-control br-b" type="text" id="prompt" >
+
+            <label class="form-control br-b" for="nIterations">Add the number of iterations</label>
+            <input class="form-control br-b" type="range" id="nIterations" min="1" max="100" value="20" oninput="this.nextElementSibling.value = this.value">
+            <output class="form-control br-b" for="nIterations"></output>
+
+            <label class="form-control br-b" for="scheduler">Choose the scheduler you want to use</label>
+            <select id="scheduler">
+              <option class="form-control br-b">DPM</option>
+              <option class="form-control br-b">DDIM</option>
+              <option class="form-control br-b">DDIMinverse</option>
+              <option class="form-control br-b">DDPM</option>
+              <option class="form-control br-b">DEIS</option>
+              <option class="form-control br-b">DPMA</option>
+              <option class="form-control br-b">Euler</option>
+              <option class="form-control br-b">EulerA</option>
+              <option class="form-control br-b">Kerras</option>
+              <option class="form-control br-b">Heun</option>
+              <option class="form-control br-b">LinearMultistep</option>
+              <option class="form-control br-b">MultistepDPM</option>
+              <option class="form-control br-b">PNDM</option>
+              <option class="form-control br-b">RePaint</option>
+              <option class="form-control br-b">SinglestepDPM</option>
+              <option class="form-control br-b">UniPC</option>
+              <option class="form-control br-b">VP-SDE</option>
+            </select>
+
+        </fieldset>
+
+        <!-- submit button -->
+        <div class="form-group">
+          <input type="button" value="Lets go!" id="submit" class="btn btn-sm btn-dark">
+        </div>
+
+      </form>
+
+      <img id="test" src="" alt="Output Image">
+      <img id="load" id src="{{ url_for('static', path='/assets/images/loading.gif') }}" alt="Loading...">
+
+    </div>
+  </div>
+</div>
+
+<script>
+   window.addEventListener("load", function () {
+    var test = document.getElementById("test");
+    test.style.display = "none";    
+    var load = document.getElementById("load");
+    load.style.display = "none";
+    var elementError = document.getElementById("elementError");
+    elementError.style.display = "none";    
+    var promptError = document.getElementById("promptError");
+    promptError.style.display = "none";
+  });
+
+  document.getElementById("submit").addEventListener("click", async function () {
+    var model = document.getElementById("model").value;
+    var element = document.getElementById("element").value;
+    var prompt = document.getElementById("prompt").value;
+    var nIterations = document.getElementById("nIterations").value;
+    var scheduler = document.getElementById("scheduler").value;
+    var test = document.getElementById("test");
+    var load = document.getElementById("load");
+    var elementError = document.getElementById("elementError");
+    var promptError = document.getElementById("promptError");
+
+    if (element == "") {
+      elementError.style.display = "inline";
+      return;
+    }    
+    if (prompt == "") {
+      promptError.style.display = "inline";
+      return;
+    }
+
+    load.style.display = "inline";
+
+    console.log("model: " + model + " " + typeof model);
+    console.log("element: " + element + " " + typeof element);
+    console.log("prompt: " + prompt + " " + typeof prompt);
+    console.log("nIterations: " + nIterations + " " + typeof nIterations);
+    console.log("scheduler: " + scheduler + " " + typeof scheduler);
+
+    const formData = new FormData();
+    formData.append("model", model);
+    formData.append("element", element);
+    formData.append("nIterations", nIterations.toString());
+    formData.append("prompt", prompt);
+    formData.append("scheduler", scheduler);
+
+    fetch("/infere/", {
+      method: "POST",
+      body: formData,
+    })
+      .then(response => response.json())
+      .then(data => {
+        load.style.display = "none";
+        document.getElementById("test").src = `data:image/png;base64,${data.image}`; //todo cambiar como recibir la foto y poner el gif mientras se
+        test.style.display = "inline";
+      })
+      .catch(error => console.error(error));
+  });
+
+</script>
+{% endblock %}
