@@ -8,7 +8,7 @@ import subprocess
 from mail_sender.sender import send_email
 
   
-async def train(
+def train(
   session_data, \
   envMail, \
   input_Dataset, \
@@ -278,9 +278,25 @@ async def train(
       prc="--fp16" if precision=="fp16" else ""
       print('[1;31mCompressing...')
       shutil.make_archive("/content/gdrive/Shareddrives/TFG-Oier-Mentxaka/models/"+Session_Name, 'zip', "/content/gdrive/Shareddrives/TFG-Oier-Mentxaka/models/"+Session_Name)
-      await send_email(envMail, session_data.username, "Training completed", "Your training has been completed. You can now use the application.")
+      send_email(envMail, session_data.username, "Training completed", "Your training has been completed. You can now use the application.")
       print('[1;32mTraining completed, model saved in /content/gdrive/Shareddrives/TFG-Oier-Mentxaka/models/'+Session_Name)
     else:
       print("[1;31mSomething went wrong")
 
+def train2(  session_data, \
+  envMail, \
+  input_Dataset, \
+  input_Session_Name, \
+  input_Concept = "", \
+  input_Resume_Training = False, \
+  input_UNet_Training_Steps = 650, \
+  input_UNet_Learning_Rate = 1e-5, \
+  input_Text_Encoder_Training_Steps = 250, \
+  input_Text_Encoder_Concept_Training_Steps = 0, \
+  input_Text_Encoder_Learning_Rate = 1e-6, \
+  input_Save_Checkpoint_Every = 500, \
+  input_Start_saving_from_the_step = 500):
+
+  time.sleep(5)
+  send_email(envMail, session_data.username, "Training completed", "Your training has been completed. You can now use the application.")
 

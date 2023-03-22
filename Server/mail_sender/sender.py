@@ -1,8 +1,6 @@
 import yagmail
 from dotenv import dotenv_values
 
-
-
 def send_email(envMail, receiver, subject, body):
     config = dotenv_values(envMail)
     sender_email = config["MAIL_FROM"]

@@ -210,31 +210,9 @@ style : str = Form(...)):
     try:
         session_data.username
         try:
-            # TODO cambiar los valores de los parametros por estos, faltan y no coinciden.
-            # train_model(session_data, envMail, 
-            #             input_Dataset, 
-            #             input_Session_Name, 
-            #             input_Concept, 
-            #             input_Resume_Training, 
-            #             input_UNet_Training_Steps, 
-            #             input_UNet_Learning_Rate, 
-            #             input_Text_Encoder_Training_Steps, 
-            #             input_Text_Encoder_Concept_Training_Steps, 
-            #             input_Text_Encoder_Learning_Rate, 
-            #             input_Save_Checkpoint_Every, 
-            #             input_Start_saving_from_the_step)
-
-            train_model(session, session_data, envMail,
-                        resume_training, 
-                        unet_training, 
-                        unet_learning, 
-                        encoder_training, 
-                        concept_training, 
-                        encoder_learning, 
-                        style)
-            #gesetionar crear modelo en la carpeta establecida
-            return "correcto" 
-        except: "incorrecto"
+            train_model(session_data, envMail, session, session, session, resume_training, unet_training, unet_learning, encoder_training, concept_training, encoder_learning, 0, 0)
+            return "correct" 
+        except: return "incorrect"
     except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
 @app.get("/infere/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
@@ -268,11 +246,9 @@ scheduler : str = Form(...)
 
             test_model(session_data, 
                        temp_folder,
-                       os.path.join(os.getcwd(), "static",
-                                    "users", session_data.username, "models", model), #add the path of the model in question
+                       os.path.join(os.getcwd(), "static", "users", session_data.username, "models", model), #add the path of the model in question
                        prompt, 
                        int(nIterations), 
-                    #    nImages,
                        element, 
                        scheduler, 
                        )
@@ -334,6 +310,14 @@ scheduler : str = Form(...)
 @app.get("/correct-generation/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
 async def correctGeneration(request: Request, session_data: SessionData = Depends(verifier)):
     try: return templates.TemplateResponse("Infering/correctGeneration.html", {"request": request, "user_name": session_data.username})
+    except: 
+        import traceback
+        traceback.print_exc()
+        return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+
+@app.get("/correct-training/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
+async def correctGeneration(request: Request, session_data: SessionData = Depends(verifier)):
+    try: return templates.TemplateResponse("Training/correctTraining.html", {"request": request, "user_name": session_data.username})
     except: 
         import traceback
         traceback.print_exc()

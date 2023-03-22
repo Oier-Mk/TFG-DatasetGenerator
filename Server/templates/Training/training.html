@@ -110,6 +110,13 @@
     fetch("/train/", {
       method: "POST",
       body: formData,
+    })
+      .then(response => response.text())
+          .then(result => {
+            if (result === 'correct') {
+              console.log("correct")
+              window.location.href = '/correct-training/';
+          }
     });
   });
 </script>
