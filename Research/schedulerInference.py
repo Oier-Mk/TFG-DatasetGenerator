@@ -7,21 +7,41 @@ print("block inference")
 models_dir = "/Users/mentxaka/GitHub/TFG-DatasetGenerator/Research/Models/"
 n_steps = 20
 n_images = 5
-# schedulers = ["DDIM", "DDIMinverse", "DDPM", "DEIS", "DPM", "DPMA", "EulerA", "Euler", "Heun", "PNDM",
-#               "LinearMultistep", "MultistepDPM", "PNDM", "RePaint", "SinglestepDPM", "Kerras", "UniPC", "VE-SDE"
-#               ]
 schedulers = [
-                "DPM",
-                "PNDM",
-                "SinglestepDPM",
-                "UniPC",
-                "MultistepDPM"
-             ]
+            "UniPC"
+              ]
+# schedulers = [
+#               "DPM", "DPMA", "EulerA", "Euler", "Heun",
+#               "LinearMultistep", "MultistepDPM", "SinglestepDPM"
+#              ]
+# schedulers = [
+#               "DDIM", "DDPM", "DEIS", "DPM", "DPMA", "EulerA", "Euler", "Heun", "PNDM",
+#               "LinearMultistep", "MultistepDPM", "PNDM", "SinglestepDPM", "Kerras", "UniPC", "VE-SDE"
+#              ]
 
-#800 900 1000 1100
-#2 3 4 
+
 folders = [ 
-                "Biscuits3E-5Stp1100",
+                # "Biscuits2E-5Stp200",
+                # "Biscuits2E-5Stp300",
+                # "Biscuits2E-5Stp400",
+                # "Biscuits2E-5Stp500",
+                "Biscuits2E-5Stp600",
+                # "Biscuits2E-5Stp700",
+                # "Biscuits2E-5Stp800",
+                # "Biscuits2E-5Stp900",
+                # "Biscuits2E-5Stp1000",
+                # "Biscuits2E-5Stp1100",
+                # "Biscuits2E-5Stp1200",
+
+                # "Biscuits3E-5Stp800",
+                # "Biscuits3E-5Stp900",
+                # "Biscuits3E-5Stp1000",
+                # "Biscuits3E-5Stp1100",
+
+                # "Biscuits4E-5Stp800",
+                # "Biscuits4E-5Stp900",
+                # "Biscuits4E-5Stp1000",
+                # "Biscuits4E-5Stp1100",
             ]
 
 # Get all folder names in the models directory

@@ -32,7 +32,7 @@ def infere(model, prompt = "a car", nSteps = 20, element = "car", nImages = 1, s
     elif scheduler == "Heun":
         scheduler = HeunDiscreteScheduler.from_pretrained(model, subfolder="scheduler")
     elif scheduler == "PNDM":
-        scheduler = IPNDMScheduler.from_pretrained(model, subfolder="scheduler")
+        scheduler = PNDMScheduler.from_pretrained(model, subfolder="scheduler")
     elif scheduler == "LinearMultistep":
         scheduler = LMSDiscreteScheduler.from_pretrained(model, subfolder="scheduler")
     elif scheduler == "MultistepDPM":
@@ -52,13 +52,12 @@ def infere(model, prompt = "a car", nSteps = 20, element = "car", nImages = 1, s
     else:
         print("Scheduler not found, using PNDM")
         scheduler = PNDMScheduler.from_pretrained(model, subfolder="scheduler")
-    scheduler = PNDMScheduler.from_pretrained(model, subfolder="scheduler")
 
     pipe = DiffusionPipeline.from_pretrained(pretrained_model_name_or_path = model, scheduler = scheduler)
 
     pipe.enable_attention_slicing()
 
-    try: os.mkdir(element+"-"+str(nSteps)+"/")
+    try: os.mkdir(element+"-"+str(nSteps)+"-"+schedulerStr+"/")
     except: pass
 
     # start the timer
@@ -66,7 +65,7 @@ def infere(model, prompt = "a car", nSteps = 20, element = "car", nImages = 1, s
 
     for i in range(nImages):
         image = pipe(prompt, num_inference_steps = nSteps).images[0] #batch_size = num_images_per_prompt 
-        image.save(element+"-"+str(nSteps)+"/"+element+" "+str(nSteps)+" "+str(i)+".png")
+        image.save(element+"-"+str(nSteps)+"-"+schedulerStr+"/"+element+" "+str(nSteps)+" "+str(i)+".png")
 
 
     # end the timer

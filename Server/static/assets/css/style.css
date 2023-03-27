@@ -77,7 +77,7 @@ body {
 }
 
 a {
-  color: #fc6e51;
+  color: #284ca4;
   -webkit-transition: all .25s ease-in-out;
      -moz-transition: all .25s ease-in-out;
       -ms-transition: all .25s ease-in-out;
@@ -257,8 +257,8 @@ p {
 
 .btn-primary {
   text-transform: uppercase;
-  background-color: #fc6e51;
-  border-color: #fc6e51;
+  background-color: #284ca4;
+  border-color: #284ca4;
 }
 
 .btn-black {
@@ -269,8 +269,8 @@ p {
 }
 
 .btn-black:hover {
-  background-color: #fc6e51;
-  border-color: #fc6e51;
+  background-color: #284ca4;
+  border-color: #284ca4;
   color: #fff;
 }
 
@@ -421,11 +421,11 @@ p {
 .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > 
 .active > a:focus {
   background: transparent;
-  color: #fc6e51;
+  color: #284ca4;
 }
 
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
-  color: #fc6e51;
+  color: #284ca4;
 }
 
 .dropdown-menu {
@@ -447,12 +447,12 @@ p {
 
 .dropdown-menu>li>a:focus, .dropdown-menu>li>a:hover {
   background-color: #fff;
-  color: #fc6e51;
+  color: #284ca4;
 }
 
 .navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus, .navbar-default .navbar-nav>.open>a:hover {
   background-color: #fff;
-  color: #fc6e51;
+  color: #284ca4;
 }
 
 .navbar-default .dropdown:hover>.dropdown-menu {
@@ -703,8 +703,8 @@ ul.caption-slides li {
 
 .big-title-sec .view-more a.btn-primary:hover {
   opacity: .8;
-  background: #fc6e51;
-  border: 1px solid #fc6e51;
+  background: #284ca4;
+  border: 1px solid #284ca4;
 }
 
 .about-box {
@@ -715,7 +715,7 @@ ul.caption-slides li {
   padding-top: 10px;
   font-size: 44px;
   line-height: 0.9;
-  color: #fc6e51;
+  color: #284ca4;
 }
 
 .about-box h4 {
@@ -756,7 +756,7 @@ ul.choose-list li, ul.soon-list li {
 
 .iconbox i {
   font-size: 32px;
-  color: #fc6e51
+  color: #284ca4
 }
 
 .choose-box-content, .soon-box-content {
@@ -1131,7 +1131,7 @@ h6.progress-value {
 
 #call-to-action-section {
   padding: 60px 0;
-  background: #eb7a5c;
+  background: #5c65eb;
 }
 
 #call-to-action-section h2, #call-to-action-section p {
@@ -1284,7 +1284,7 @@ h6.progress-value {
 
 .process-icon span {
   font-size: 40px;
-  color: #fc6e51;
+  color: #284ca4;
 }
 
 .process h5 {
@@ -1396,11 +1396,11 @@ ul.filter-list li a {
 }
 
 ul.filter-list li a:hover {
-  color: #fc6e51;
+  color: #284ca4;
 }
 
 ul.filter-list li a.active {
-  color: #fc6e51;
+  color: #284ca4;
 }
 
 ul.filter-list li a:after {
@@ -1688,7 +1688,7 @@ textarea.form-control {
 }
 
 .portfolio-desc a:hover {
-  color: #fc6e51;
+  color: #284ca4;
   opacity: .8;
 }
 
@@ -1819,7 +1819,7 @@ ul.features-list li {
 
 .iconbox i {
   font-size: 32px;
-  color: #fc6e51
+  color: #284ca4
 }
 
 .features-box-content {
@@ -1875,7 +1875,7 @@ ul.features-list li {
   content: '';
   top: 0;
   left: 0;
-  background: #fc6e51;
+  background: #284ca4;
   opacity: .9;
   width: 100%;
   height: 100%;
@@ -1948,7 +1948,7 @@ ul.features-list li {
 
 .offer-icon {
   font-size: 42px;
-  color: #fc6e51;
+  color: #284ca4;
   padding-bottom: 15px;
 }
 
@@ -2048,7 +2048,7 @@ ul.testimonials-slider li p {
 }
 
 .testimonials-author {
-  color: #fc6e51;
+  color: #284ca4;
 }
 
 .tc-arrows {
@@ -2061,10 +2061,10 @@ ul.testimonials-slider li p {
 
 .testimonials-carousel a.bx-next, .testimonials-carousel a.bx-prev {
   display: block;
-  color: #fc6e51;
+  color: #284ca4;
   width: 30px;
   height: 30px;
-  border: 1px solid #fc6e51;
+  border: 1px solid #284ca4;
   text-align: center;
   -webkit-border-radius: 50%;
      -moz-border-radius: 50%;
@@ -2078,7 +2078,7 @@ ul.testimonials-slider li p {
 
 .testimonials-carousel a.bx-next:hover, .testimonials-carousel a.bx-prev:hover {
   color: #fff;
-  background: #fc6e51;
+  background: #284ca4;
 }
 
 .tc-arrow-left {
@@ -2305,7 +2305,7 @@ h4.comments-title {
 }
 
 .media-heading {
-  color: #fc6e51!important;
+  color: #284ca4!important;
   font-size: 15px;
 }
 
@@ -2339,7 +2339,7 @@ h4.comments-title {
 }
 
 .required {
-  color: #fc6e51;
+  color: #284ca4;
 }
 
 label {
@@ -2587,7 +2587,7 @@ ul.features-app-list li {
 
 .app-feature-icon {
   font-size: 24px;
-  color: #fc6e51;
+  color: #284ca4;
   margin-right: 20px;
 }
 
@@ -2872,7 +2872,7 @@ ul.download li a img {
 }
 
 #experiences-section .list-experiences .time span.fa {
-  color: #fc6e51;
+  color: #284ca4;
   font-size: 16px;
 }
 
@@ -2923,7 +2923,7 @@ ul.footer-social-links li a:after {
   left: 0;
   right: 0;
   height: 1px;
-  background: #fe8869;
+  background: #6984fe;
   opacity: 0;
   -webkit-transform: translateY(5px);
      -moz-transform: translateY(5px);
@@ -2956,7 +2956,7 @@ p.copyright {
 
 .back-to-top {
   text-align: center;
-  background: #ed4d2b;
+  background: #2b31ed;
   color: #fff;
   display: none;
   width: 40px;

@@ -135,7 +135,6 @@ def infereTest(model, temp_folder, prompt = "a car", nSteps = 20, element = "car
     else:
         print("Scheduler not found, using PNDM")
         scheduler = PNDMScheduler.from_pretrained(model, subfolder="scheduler")
-    scheduler = PNDMScheduler.from_pretrained(model, subfolder="scheduler")
 
     pipe = DiffusionPipeline.from_pretrained(pretrained_model_name_or_path = model, scheduler = scheduler)
 

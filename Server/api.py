@@ -138,9 +138,9 @@ async def cropImages(request: Request, session_data: SessionData = Depends(verif
             with open(session_dir + i.filename, "wb") as buffer:
                 buffer.write(i.file.read())
                 buffer.close()
-        return templates.TemplateResponse("/Cropping/correctCrop.html", {"request": request})
+        return "correct"
     else:
-        return templates.TemplateResponse("Utils/rejection.html", {"request": request})
+        return "incorrect"
 
 
 # FILE EXPLORER
@@ -213,7 +213,7 @@ style : str = Form(...)):
             train_model(session_data, envMail, session, session, session, resume_training, unet_training, unet_learning, encoder_training, concept_training, encoder_learning, 0, 0)
             return "correct" 
         except: return "incorrect"
-    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+    except: "loginPlease"
 
 @app.get("/infere/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
 async def getInfere(request: Request, session_data: SessionData = Depends(verifier)):
@@ -231,7 +231,7 @@ async def getInfere(request: Request, session_data: SessionData = Depends(verifi
     except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
 
 @app.post("/infere/", response_class=HTMLResponse, dependencies=[Depends(cookie)])
-async def postTrain(request: Request, session_data: SessionData = Depends(verifier), 
+async def postInfere(request: Request, session_data: SessionData = Depends(verifier), 
 model : str = Form(...), 
 prompt : str = Form(...), 
 nIterations : str = Form(...), 
@@ -260,7 +260,7 @@ scheduler : str = Form(...)
 
             return json.dumps({"image": encoded_string})
         except: "incorrecto"
-    except: return templates.TemplateResponse("Utils/loginPlease.html", {"request": request})
+    except: "loginPlease"
 
 
 @app.get("/generate/", response_class=HTMLResponse, dependencies=[Depends(cookie)])

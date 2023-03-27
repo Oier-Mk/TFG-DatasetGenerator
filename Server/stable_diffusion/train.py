@@ -82,7 +82,8 @@ def train(
 
     print('\n[1;32mDone, proceed to the training cell')
 
-  def dump_only_textenc(train_only_text_encoder, pretrained_model_name_or_path, instance_data_dir, output_dir, instance_prompt, GC, precision, learning_rate, max_train_steps):
+  def dump_only_textenc(train_only_text_encoder, pretrained_model_name_or_path, instance_data_dir, output_dir, 
+                        instance_prompt, GC, precision, learning_rate, max_train_steps):
       cmd = f'''accelerate launch /content/diffusers/examples/dreambooth/train_dreambooth.py \
         {train_only_text_encoder} \
         --image_captions_filename \
@@ -105,7 +106,8 @@ def train(
       subprocess.call(cmd, shell=True)
 
 
-  def train_only_unet(style, stpsv, stp, SESSION_DIR, MODELT_NAME, INSTANCE_DIR, OUTPUT_DIR, PT, precision, Training_Steps):
+  def train_only_unet(style, stpsv, stp, SESSION_DIR, MODELT_NAME, INSTANCE_DIR, 
+                      OUTPUT_DIR, PT, precision, Training_Steps):
       if Resume_Training:
           print('Resuming Training...')
       print('Training the UNet...')
@@ -298,5 +300,6 @@ def train2(  session_data, \
   input_Start_saving_from_the_step = 500):
 
   time.sleep(5)
+
   send_email(envMail, session_data.username, "Training completed", "Your training has been completed. You can now use the application.")
 

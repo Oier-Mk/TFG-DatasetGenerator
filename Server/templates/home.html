@@ -43,4 +43,99 @@
       </div> <!-- End hero-section -->
     </section>
 
+    <section>
+      <div id="features-app-section-2" class="pad-sec">
+        <div class="container">
+            <div class="features-app-content-left animated fadeInLeft in" data-animation="fadeInLeft" data-delay="0">
+              <div class="section_header">
+                <h2>Stable Diffusion para Fine tuning</h2> 
+              </div> <!-- End section_header -->
+                <p> 
+                  Bienvenido a la página de Fine Tuning de Stable Diffusion. En esta página se puede generar un dataset a partir de una serie de imagenes y un modelo preentrenado. Se personaliza el modelo con las imágenes personalizadas y se puede usar dicho modelo para inferir datasets de imágenes personalizadas.
+                </p>
+
+                <ul class="features-app-list">
+
+                  <!-- feature -->
+                  <li>
+                    <div class="feature-app-box animated fadeInLeft in" data-animation="fadeInLeft" data-delay="0">
+                      <div class="app-feature-icon pull-left"><span class="pe-7s-graph"></span></div>
+                      <div class="feature-app-box-content">
+                        <h6>Introducción</h6>
+                        <p>
+                          Los desarrolladores de Stable Diffusion han desarrollado una función llamada Fine Tuning que permite personalizar un modelo preentrenado mediante el entrenamiento con una pequeña cantidad de datos etiquetados. Esto implica reentrenar el modelo original de Stable Diffusion con los datos deseados, utilizando dos métodos de entrenamiento: interno y externo.  
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+
+                  <!-- feature -->
+                  <li>
+                    <div class="feature-app-box animated fadeInLeft in" data-animation="fadeInLeft" data-delay="0">
+                      <div class="app-feature-icon pull-left"><span class="pe-7s-config"></span></div>
+                      <div class="feature-app-box-content">
+                        <h6>Tipos de entrenamiento</h6>
+                        <p>
+                          Existen dos tipos de entrenamiento en este tipo personalización, el entrenamiento externo y el interno.
+                          Abajo se pueden apreciar las diferencias entre ambos, el interno realiza cambios en la imagen original cambiando únicamente el fondo, mientras que el externo realiza cambios en la imagen original cambiando el objeto y manteniendo el fondo.
+                        </p>
+                        <img src="/static/assets/images/tutorial/EntrenamientoInterno.png" alt="Entrenamiento interno">
+                        <p style="text-align:center; font-style:italic;">Entrenamiento interno</p>
+                        <img src="/static/assets/images/tutorial/EntrenamientoExterno.png" alt="Entrenamiento externo">
+                        <p style="text-align:center; font-style:italic;">Entrenamiento externo</p>
+
+                      </div>
+                    </div>
+                  </li>
+
+                  <li>
+                    <div class="feature-app-box animated fadeInLeft in" data-animation="fadeInLeft" data-delay="0">
+                      <div class="app-feature-icon pull-left"><span class="pe-7s-refresh-2"></span></div>
+                      <div class="feature-app-box-content">
+                        <h6>Ejemplo de uso</h6>
+                        <p>
+                          Teknei quiere desarrollar un sistema de control de calidad automático para desechar galletas rotas en una empresa de panadería, pero el cliente solo proporciona 20 imágenes de galletas rotas. Por ello, tiene que buscar otras formas de conseguir más imágenes para entrenar su modelo de IA supervisado.
+                        </p>
+                        <img src="/static/assets/images/tutorial/DatasetGalletas.png"  style="display: block; margin: auto" alt="Fragmento de dataset original">
+                        <p style="text-align:center; font-style:italic;">Fragmento de dataset original</p>
+                        <p>
+                          Para este tipo de problemáticas, es preciso realizar un entrenamiento con las imágenes proporcionadas por el cliente y los diferentes valores para el <em>Learning Rate</em> y <em>Training Steps</em>. Entre estos parámetros, se requiere un equilibrio entre los parámetros para un buen entrenamiento, generando una situación semejante a la siguiente gráfica de la <em>loss fuction</em>.
+                        </p>
+                        <img src="/static/assets/images/tutorial/Grafica.png" style="width: 50%; display: block; margin: auto" alt="Grafica relacion Learning Rate y Training Steps">
+                        <p style="text-align:center; font-style:italic">Grafica relacion <em>Learning Rate</em> y <em>Training Step</em>.</p>
+                        <p>
+                          En caso de ser asi, encontrar un valor de <em>Learning Rate</em> y <em>Training Steps</em> en el mínimo de la función de pérdida, es decir, para generar una mayor precisión o menor tasa de error en el modelo.
+                        </p>
+                        <img src="/static/assets/images/tutorial/Training.png" style="width: 100%; display: block; margin: auto" alt="Grafica relacion Learning Rate y Training Steps">
+                        <p style="text-align:center; font-style:italic">Resultados del entrenamiento con los diferentes <em>Training Steps</em> y <em>Learning Rate</em>.</p>
+                        <p>
+                          En este caso, con un dataset de imágenes reducidas podemos considerar que un <em>Learning Rate</em> de <b>4E-5</b> y un <em>Training Steps</em> de <b>900</b>, se obtiene un modelo con una precisión bastante buena en diferentes dataset de esos tamaños.
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+
+                  <li>
+                    <div class="feature-app-box animated fadeInLeft in" data-animation="fadeInLeft" data-delay="0">
+                      <div class="app-feature-icon pull-left"><span class="pe-7s-lock"></span></div>
+                      <div class="feature-app-box-content">
+                        <h6>Tipos de inferencia</h6>
+                        <p>
+                         Un scheduler es un componente de la inferencia de Stable Difusión que define el proceso de eliminación de ruido para un modelo de difusión. Estos algoritmos generan de manera diferente la imagen de salida, por lo que es necesario estudiar cuáles son aquellos con mejores resultados.
+                        </p>   
+                        <img src="/static/assets/images/tutorial/Schedulers.png" style="width: 100%; display: block; margin: auto" alt="Grafica relacion Learning Rate y Training Steps">
+                        <p style="text-align:center; font-style:italic">Diferentes <em>schedulers</em> con el dataset de entrada.</p>
+                        <p>
+                          En este caso, con un dataset de imágenes reducidas podemos considerar que con un <em>Scheduler</em> <b>PNDM</b>, se obtiene un conjunto de imágenes con una precisión bastante buena con un dataset ese tamaño.
+                        </p>                     
+                      </div>
+                    </div>
+                  </li>
+                  
+                </ul>
+            </div> <!-- End feature-content -->
+        </div> <!-- End container -->
+      </div> <!-- End feature-section -->
+    </section>
+
         {% endblock %}
