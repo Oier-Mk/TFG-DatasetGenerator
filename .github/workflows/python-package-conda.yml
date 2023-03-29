@@ -31,5 +31,5 @@ jobs:
     - name: Test with unittest
       run: |
         conda install unittests
-        run:  python -m unittest "Element1DTest,Element1DDCTest,Element1DVarTest,StableMatchingTest,CircuitTest,TSPTest,AllDifferentFWCTest,AllDifferentDCTest"
+        run:  python -m unittest "test_database, test_sender, test_session"
 
