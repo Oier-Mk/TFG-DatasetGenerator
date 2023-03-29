@@ -2,10 +2,6 @@ import mysql.connector as con
 from mysql.connector import errorcode
 import dotenv
 
-def delete_database():
-    conf = dotenv.dotenv_values("/Users/mentxaka/Github/TFG-DatasetGenerator/Server/.envDDBB")
-    db = con.connect(host='localhost', user=conf["MYSQL_USERNAME"], passwd=conf["MYSQL_PASSWORD"])
-    db.cursor().execute("DROP DATABASE DatasetGenerator")
 
 def load_database(env): 
     print(env)
@@ -82,3 +78,4 @@ def print_users(env):
         print(x)
     db.close()
     
+

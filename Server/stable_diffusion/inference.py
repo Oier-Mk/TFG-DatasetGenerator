@@ -113,7 +113,7 @@ def infereTest(model, temp_folder, prompt = "a car", nSteps = 20, element = "car
     elif scheduler == "Heun":
         scheduler = HeunDiscreteScheduler.from_pretrained(model, subfolder="scheduler")
     elif scheduler == "PNDM":
-        scheduler = IPNDMScheduler.from_pretrained(model, subfolder="scheduler")
+        scheduler = PNDMScheduler.from_pretrained(model, subfolder="scheduler")
     elif scheduler == "LinearMultistep":
         scheduler = LMSDiscreteScheduler.from_pretrained(model, subfolder="scheduler")
     elif scheduler == "MultistepDPM":

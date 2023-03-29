@@ -17,3 +17,4 @@ def send_email(envMail, receiver, subject, body):
         print(f'Error sending email: {str(e)}')
     finally:
         yag.close()
+
