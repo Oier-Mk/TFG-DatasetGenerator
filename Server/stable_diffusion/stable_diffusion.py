@@ -1,5 +1,5 @@
 from stable_diffusion.train import train, train2
-from stable_diffusion.inference import infereDataset, infereTest
+from stable_diffusion.inference import infere_dataset, infere_test
 import os 
 import shutil
 import threading
@@ -9,10 +9,10 @@ def train_model(session_data, envMail, input_Dataset, input_Session_Name, input_
     t.start()
 
 def test_model(session_data, temp_folder, model, prompt, nSteps, element, scheduler):
-    infereTest(model, temp_folder = temp_folder,prompt = prompt, nSteps = nSteps, element = element, nImages = 1, scheduler = scheduler,)
+    infere_test(model, temp_folder = temp_folder,prompt = prompt, nSteps = nSteps, element = element, nImages = 1, scheduler = scheduler,)
     
 def generate_dataset(username, envMail, name, model, prompt, nSteps, element, nImages, scheduler):
-    t = threading.Thread(target=infereDataset, args=(username, envMail, name, model, prompt, nSteps, element, nImages, scheduler))
+    t = threading.Thread(target=infere_dataset, args=(username, envMail, name, model, prompt, nSteps, element, nImages, scheduler))
     t.start()
 
 def get_sessions(session, directory):

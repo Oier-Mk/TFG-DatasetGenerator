@@ -10,7 +10,7 @@ from mail_sender.sender import send_email
 import os
 import time
 
-def infereDataset(username, envMail, name, model, prompt = "a car", nSteps = 20, element = "car", nImages = 1, scheduler = "PNDM"):
+def infere_dataset(username, envMail, name, model, prompt = "a car", nSteps = 20, element = "car", nImages = 1, scheduler = "PNDM"):
 
     schedulerStr= scheduler
     print(schedulerStr)
@@ -89,7 +89,7 @@ def infereDataset(username, envMail, name, model, prompt = "a car", nSteps = 20,
 
 
 
-def infereTest(model, temp_folder, prompt = "a car", nSteps = 20, element = "car", nImages = 1, scheduler = "PNDM"):
+def infere_test(model, temp_folder, prompt = "a car", nSteps = 20, element = "car", nImages = 1, scheduler = "PNDM"):
 
     schedulerStr= scheduler
     print(schedulerStr)

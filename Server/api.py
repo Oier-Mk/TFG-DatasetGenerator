@@ -141,6 +141,7 @@ async def cropImages(request: Request, session_data: SessionData = Depends(verif
         return "correct"
     else:
         return "incorrect"
+    
 
 
 # FILE EXPLORER
