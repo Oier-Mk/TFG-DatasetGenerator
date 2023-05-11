@@ -105,7 +105,6 @@ def train(
       
       subprocess.call(cmd, shell=True)
 
-
   def train_only_unet(style, stpsv, stp, SESSION_DIR, MODELT_NAME, INSTANCE_DIR, 
                       OUTPUT_DIR, PT, precision, Training_Steps):
       if Resume_Training:

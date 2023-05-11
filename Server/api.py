@@ -260,7 +260,10 @@ scheduler : str = Form(...)
             shutil.rmtree(temp_folder)
 
             return json.dumps({"image": encoded_string})
-        except: "incorrecto"
+        except: 
+            "incorrecto"
+            import traceback
+            traceback.print_exc()
     except: "loginPlease"
 
 
